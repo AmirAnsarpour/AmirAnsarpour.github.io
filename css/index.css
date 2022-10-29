@@ -1,10 +1,53 @@
 body {
-  background-color: black;
+  background-image: url("../images/bg.jpg");
+  background-size: cover;
+
+  font-family: 'Roboto';
+}
+::selection {
+  color: #000000;
+  background: #ff8800;
+}
+@font-face {
+  font-family: 'Roboto';
+  src: url('../fonts/Roboto-Medium.woff2') format('woff2'),
+      url('../fonts/Roboto-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
 }
 
-div {
-  width: 200px;
-  height: 200px;
-  margin: 0px auto;
-  background-color: red;
+.custom-project div h5{
+  font-size: 20px;
+}
+.custom-project div {
+  max-width: 30rem;
+  transition: all 700ms ease 0s;
+}
+
+.custom-project div .custom-link {
+  font-size: 16px;
+  margin: 2px auto 10px auto;
+  width: 40%;
+  border-radius: 30px;
+  color: white;
+  text-decoration: none;
+  background-color: black;
+  padding: 10px;
+  text-align: center;
+  transition: all 700ms ease 0s;
+}
+.card-header{
+  font-size: 16px;
+  color: rgb(74, 74, 74);
+}
+.custom-project div .custom-link:hover {
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
+  color: rgb(255, 136, 0);
+}
+
+@media all and (min-width:768px) {
+  .custom-project .card:hover {
+    transform: scale(1.1);
+  }
 }
