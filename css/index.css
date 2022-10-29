@@ -1,7 +1,6 @@
 body {
   background-image: url("../images/bg.jpg");
   background-size: cover;
-
   font-family: 'Roboto';
 }
 ::selection {
@@ -16,7 +15,6 @@ body {
   font-style: normal;
   font-display: swap;
 }
-
 .custom-project div h5{
   font-size: 20px;
 }
@@ -24,7 +22,6 @@ body {
   max-width: 30rem;
   transition: all 700ms ease 0s;
 }
-
 .custom-project div .custom-link {
   font-size: 16px;
   margin: 2px auto 10px auto;
@@ -45,7 +42,6 @@ body {
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
   color: rgb(255, 136, 0);
 }
-
 @media all and (min-width:768px) {
   .custom-project .card:hover {
     transform: scale(1.1);
