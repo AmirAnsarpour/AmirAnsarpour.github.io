@@ -24,16 +24,10 @@ body {
   transition: all 700ms ease 0s;
 }
 .card{
-  background-color: rgba(181, 181, 181, 0.3) !important;
+  background-color: rgba(181, 181, 181, 0.8) !important;
 }
 .card:hover {
   background-color: rgba(255, 255, 255, 1) !important;
-}
-.custom-time{
-  visibility: hidden;
-}
-.custom-project div:hover .custom-time{
-  visibility: visible;
 }
 .custom-project div .custom-link {
   font-size: 16px;
@@ -42,7 +36,7 @@ body {
   border-radius: 30px;
   color: white;
   text-decoration: none;
-  background-color: black;
+  background-color: rgb(0, 0, 0);
   padding: 10px;
   text-align: center;
   transition: all 700ms ease 0s;
@@ -55,7 +49,7 @@ body {
   font-size: 16px;
   color: rgb(74, 74, 74);
 }
-.twitter {
+.fixed-icon{
   position: fixed;
   width: 60px;
   height: 60px;
@@ -63,39 +57,31 @@ body {
   bottom: 30px;
   left: 20px;
   background-color: rgba(181, 181, 181, 0.3);
-  color: #FFF;
+  color: wheat;
   border-radius: 50%;
   text-align: center;
   font-size: 35px;
   box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   z-index: 100;
   transition: all 600ms ease 0s;
+}
+.fixed-icon:hover{
+  border-radius: 20px;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
+}
+.twitter {
+  bottom: 30px;
+  left: 20px;
 }
 .twitter:hover{
-  border-radius: 20px;
   background-color: rgba(58, 107, 199, 0.5);
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
 }
 .instagram {
-  position: fixed;
-  width: 60px;
-  height: 60px;
-  line-height: 65px;
   bottom: 30px;
   left: 90px;
-  background-color: rgba(181, 181, 181, 0.3);
-  color: #FFF;
-  border-radius: 50%;
-  text-align: center;
-  font-size: 35px;
-  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
-  z-index: 100;
-  transition: all 600ms ease 0s;
 }
 .instagram:hover{
-  border-radius: 20px;
   background-color: rgba(139, 79, 204,0.5);
-  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
 }
 @media all and (min-width:768px) {
   .custom-project .card:hover {
