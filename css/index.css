@@ -20,12 +20,25 @@ body {
 }
 .custom-project div {
   max-width: 30rem;
+  cursor: default;
   transition: all 700ms ease 0s;
+}
+.card{
+  background-color: rgba(181, 181, 181, 0.3) !important;
+}
+.card:hover {
+  background-color: rgba(255, 255, 255, 1) !important;
+}
+.custom-time{
+  visibility: hidden;
+}
+.custom-project div:hover .custom-time{
+  visibility: visible;
 }
 .custom-project div .custom-link {
   font-size: 16px;
   margin: 2px auto 10px auto;
-  width: 40%;
+  width: fit-content;
   border-radius: 30px;
   color: white;
   text-decoration: none;
@@ -34,16 +47,58 @@ body {
   text-align: center;
   transition: all 700ms ease 0s;
 }
+.custom-project div .custom-link:hover {
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.6);
+  color: rgb(255, 136, 0);
+}
 .card-header{
   font-size: 16px;
   color: rgb(74, 74, 74);
 }
-.custom-project div .custom-link:hover {
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.4);
-  color: rgb(255, 136, 0);
+.twitter {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  line-height: 65px;
+  bottom: 30px;
+  left: 20px;
+  background-color: rgba(181, 181, 181, 0.3);
+  color: #FFF;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 35px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  transition: all 600ms ease 0s;
+}
+.twitter:hover{
+  border-radius: 20px;
+  background-color: rgba(58, 107, 199, 0.5);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
+}
+.instagram {
+  position: fixed;
+  width: 60px;
+  height: 60px;
+  line-height: 65px;
+  bottom: 30px;
+  left: 90px;
+  background-color: rgba(181, 181, 181, 0.3);
+  color: #FFF;
+  border-radius: 50%;
+  text-align: center;
+  font-size: 35px;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
+  z-index: 100;
+  transition: all 600ms ease 0s;
+}
+.instagram:hover{
+  border-radius: 20px;
+  background-color: rgba(139, 79, 204,0.5);
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
 }
 @media all and (min-width:768px) {
   .custom-project .card:hover {
-    transform: scale(1.1);
+    transform: scale(1.06);
   }
 }
