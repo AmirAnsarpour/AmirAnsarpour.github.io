@@ -1,6 +1,7 @@
 body {
-  background-image: url("../images/bg.jpg");
-  background-size: cover;
+  background-color: rgba(0, 0, 0, 0.865);
+  /* background-image: url("../images/bg.jpg");
+  background-size: cover; */
   font-family: 'Roboto';
 }
 ::selection {
@@ -34,14 +35,15 @@ body {
   margin: 2px auto 10px auto;
   width: fit-content;
   border-radius: 30px;
-  color: white;
+  color: rgba(255, 255, 255, 0.688);
   text-decoration: none;
-  background-color: rgb(0, 0, 0);
+  background-color: rgba(0, 0, 0,0.8);
   padding: 10px;
   text-align: center;
-  transition: all 700ms ease 0s;
+  transition: all 500ms linear 0s;
 }
 .custom-project div .custom-link:hover {
+  background-color: rgb(0, 0, 0);
   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.6);
   color: rgb(255, 136, 0);
 }
@@ -53,8 +55,7 @@ body {
   position: fixed;
   width: 60px;
   height: 60px;
-  line-height: 60px;
-  bottom: 30px;
+  line-height: 62px;
   left: 20px;
   background-color: rgba(181, 181, 181, 0.3);
   color: rgba(0, 0, 0, 0.5);
@@ -64,38 +65,29 @@ body {
   box-shadow: 0px 0px 15px rgba(181, 181, 181, 0.3);
   z-index: 100;
   text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
-  border: 1px solid transparent;
-  transition: all 600ms ease 0s;
+  transition: all 700ms ease 0s;
 }
 .fixed-icon:hover{
   border-radius: 20px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
   color: rgba(255, 255, 255, 0.5);
   text-shadow: 0px 0px 5px rgba(255, 255, 255, 0.5);
+  background-color: rgba(0, 0, 0, 0.5);
 }
 .twitter {
   bottom: 30px;
-  left: 20px;
-}
-.twitter:hover{
-  background-color: rgba(58, 107, 199, 0.5);
-  box-shadow: 0px 0px 20px rgb(58, 107, 199);
 }
 .instagram {
-  bottom: 100px;
-  left: 20px;
-}
-.instagram:hover{
-  background-color: rgba(139, 79, 204,0.5);
-  box-shadow: 0px 0px 20px  rgb(139, 79, 204);
+  bottom: 103px;
 }
 .github {
-top: 20px;
-left: 20px;
+bottom: 176px;
 }
-.github:hover{
-  background-color: transparent;
-  border: 1px solid rgba(255, 255, 255,0.3);
+.linkedin{
+  bottom: 249px;
+}
+.mail{
+  bottom: 322px;
 }
 @media all and (min-width:768px) {
   .custom-project .card:hover {
