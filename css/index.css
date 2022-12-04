@@ -4,32 +4,49 @@ body {
   background-size: cover; */
   font-family: 'Roboto';
 }
+
 ::selection {
   color: #000000;
   background: #ff8800;
 }
+
+.teamlink {
+  color: #000000;
+  transition: all 400ms ease 0s;
+}
+
+.teamlink:hover {
+  text-decoration: none;
+  color: #ff8800;
+}
+
 @font-face {
   font-family: 'Roboto';
   src: url('../fonts/Roboto-Medium.woff2') format('woff2'),
-      url('../fonts/Roboto-Medium.woff') format('woff');
+    url('../fonts/Roboto-Medium.woff') format('woff');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
-.custom-project div h5{
+
+.custom-project div h5 {
   font-size: 20px;
 }
+
 .custom-project div {
   max-width: 30rem;
   cursor: default;
   transition: all 700ms ease 0s;
 }
-.card{
+
+.card {
   background-color: rgba(181, 181, 181, 0.8) !important;
 }
+
 .card:hover {
   background-color: rgba(255, 255, 255, 1) !important;
 }
+
 .custom-project div .custom-link {
   font-size: 16px;
   margin: 2px auto 10px auto;
@@ -37,25 +54,29 @@ body {
   border-radius: 30px;
   color: rgba(255, 255, 255, 0.688);
   text-decoration: none;
-  background-color: rgba(0, 0, 0,0.8);
+  background-color: rgba(0, 0, 0, 0.8);
   padding: 10px;
   text-align: center;
   transition: all 300ms linear 0s;
 }
-.custom-project div:hover .custom-link{
+
+.custom-project div:hover .custom-link {
   color: white;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.6);
 }
+
 .custom-project div .custom-link:hover {
   background-color: rgb(0, 0, 0);
   box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.6);
   color: rgb(255, 136, 0);
 }
-.card-header{
+
+.card-header {
   font-size: 16px;
   color: rgb(74, 74, 74);
 }
-.fixed-icon a{
+
+.fixed-icon a {
   position: fixed;
   width: 60px;
   height: 60px;
@@ -73,7 +94,8 @@ body {
   text-shadow: 0px 0px 5px rgba(0, 0, 0, 0.5);
   transition: all 300ms ease 0s;
 }
-.fixed-icon a:hover{
+
+.fixed-icon a:hover {
   border-radius: 23px;
   border: 2px solid rgba(181, 181, 181, 0.3);
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.7);
@@ -81,24 +103,31 @@ body {
   text-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5);
   background-color: rgba(0, 0, 0, 0.3);
 }
-.fixed-icon i{
+
+.fixed-icon i {
   display: inline;
 }
-.fixed-icon p{
+
+.fixed-icon p {
   display: none;
 }
-.fixed-icon p:hover{
+
+.fixed-icon p:hover {
   display: block;
 }
+
 .twitter {
   bottom: 30px;
 }
+
 .instagram {
   bottom: 103px;
 }
+
 .github {
   bottom: 176px;
 }
+
 @media all and (min-width:768px) {
   .custom-project .card:hover {
     transform: scale(1.06);
