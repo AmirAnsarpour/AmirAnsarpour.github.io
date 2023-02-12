@@ -1,7 +1,7 @@
 body {
   background-color: rgba(0, 0, 0, 0.865);
   font-family: 'Signika', sans-serif;
-  font-size: 19px;
+  font-size: 14px;
   -webkit-user-select: none;
   -ms-user-select: none;
   user-select: none;
@@ -16,10 +16,6 @@ body {
 .teamlink:hover {
   text-decoration: none;
   color: #ff8800;
-}
-
-.custom-project div h5 {
-  font-size: 20px;
 }
 
 .custom-project div {
@@ -37,7 +33,6 @@ body {
 }
 
 .custom-project div .custom-link {
-  font-size: 16px;
   margin: 2px auto 10px auto;
   width: fit-content;
   border-radius: 30px;
@@ -61,7 +56,6 @@ body {
 }
 
 .card-header {
-  font-size: 16px;
   color: rgb(74, 74, 74);
 }
 
@@ -124,16 +118,16 @@ body {
 
 #small-link p {
   text-decoration: none;
-  font-size: 45px;
-  margin-top: 25px;
+  font-size: 30px;
+  margin-top: 15px;
   text-align: center;
 }
 
 #small-link a {
   display: inline-block;
-  width: 80px;
-  height: 80px;
-  line-height: 79px;
+  width: 60px;
+  height: 60px;
+  line-height: 59px;
   border: 2px solid transparent;
   border-radius: 50px;
   color: rgba(0, 0, 0, 0.5);
@@ -153,6 +147,10 @@ body {
 }
 
 @media all and (min-width:768px) {
+  body {
+    font-size: 18px;
+  }
+
   .custom-project .card:hover {
     transform: scale(1.06);
   }
