@@ -86,3 +86,18 @@ body {
 .opacity-low {
     opacity: 0.5;
 }
+
+#fullscreen-overlay {
+    text-align: center;
+    color: white;
+    font-size: 30px;
+}
+
+#fullscreen-overlay span {
+    color: red;
+}
+
+#fullscreen-image {
+    width: 90%;
+    border-radius: 30px;
+}
