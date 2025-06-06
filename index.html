@@ -5,16 +5,160 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="im AmirAnsarpour. I wanna know everything. You can always count on me.">
+    <meta name="description" content="Amir Ansarpour - Developer Portfolio">
     <meta name="author" content="AmirAnsarpour">
     <meta name="keywords"
         content="AmirAnsarpour, web developer, html css, bootstrap, javascript, react, microsoft admin server">
-    <title>AmirAnsarpour</title>
-    <!-- css  -->
-    <link rel="stylesheet" href="css/index.css">
-    <script src="js/script.js" defer></script>
+    <title>Amir Ansarpour</title>
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#000000',
+                        secondary: '#111111',
+                        accent: '#ffffff'
+                    }
+                }
+            }
+        }
+    </script>
 </head>
 
-<body>
-    <canvas id="canvas"></canvas>
+<body class="bg-primary text-white min-h-screen">
+    <!-- Film grain overlay -->
+    <div class="film-grain fixed inset-0 z-20 pointer-events-none"></div>
+    
+    <div id="particles-js" class="fixed inset-0 z-0 opacity-30"></div>
+    
+    <div class="relative z-10 container mx-auto px-4 py-12 max-w-5xl">
+        <!-- Header Section -->
+        <header class="flex flex-col md:flex-row justify-between items-center mb-16">
+            <div class="flex items-center mb-6 md:mb-0">
+                <h1 class="text-4xl font-bold text-white">Amir Ansarpour</h1>
+            </div>
+            
+            <!-- Main Website Link with Animation -->
+            <a href="https://ansarpour.com" class="border border-white px-8 py-3 hover:bg-white hover:text-black transition-all duration-300 ease-in-out">
+                ansarpour.com
+            </a>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="mb-20">
+            <div class="flex flex-col md:flex-row items-center justify-between">
+                <div class="md:w-1/2 mb-10 md:mb-0">
+                    <h2 class="text-5xl font-bold mb-6">Developer.<br>Creator.</h2>
+                    <p class="text-xl text-gray-300 mb-8">Exploring the digital frontier.</p>
+                    <div class="flex space-x-4">
+                        <a href="https://github.com/AmirAnsarpour" class="border border-white hover:bg-white hover:text-black transition-all duration-300 p-3" aria-label="GitHub">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                        <a href="https://instagram.com/AmirAnsarpour_" class="border border-white hover:bg-white hover:text-black transition-all duration-300 p-3" aria-label="Instagram">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="https://youtube.com/@AmirAnsarpour" class="border border-white hover:bg-white hover:text-black transition-all duration-300 p-3" aria-label="YouTube">
+                            <i class="fab fa-youtube text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                <div class="md:w-1/2 flex justify-center">
+                    <div class="relative w-64 h-64">
+                        <img src="img/me.png" alt="Amir Ansarpour" class="rounded-full w-full h-full object-cover border-2 border-white">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Repositories Section -->
+        <section class="mb-20">
+            <h2 class="text-3xl font-bold mb-8 border-b border-gray-800 pb-4">My GitHub Repositories</h2>
+            <div id="repositories" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Repositories will be loaded here -->
+                <!-- Loading placeholders -->
+                <div class="repo-placeholder bg-secondary border border-gray-800 p-6">
+                    <div class="animate-pulse">
+                        <div class="h-5 bg-gray-800 w-3/4 mb-4"></div>
+                        <div class="h-3 bg-gray-800 w-full mb-2"></div>
+                        <div class="h-3 bg-gray-800 w-5/6 mb-6"></div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-gray-800 rounded-full mr-2"></div>
+                                <div class="h-3 bg-gray-800 w-16"></div>
+                            </div>
+                            <div class="flex space-x-4">
+                                <div class="flex items-center">
+                                    <div class="h-3 bg-gray-800 w-8"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="repo-placeholder bg-secondary border border-gray-800 p-6">
+                    <div class="animate-pulse">
+                        <div class="h-5 bg-gray-800 w-3/4 mb-4"></div>
+                        <div class="h-3 bg-gray-800 w-full mb-2"></div>
+                        <div class="h-3 bg-gray-800 w-5/6 mb-6"></div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-gray-800 rounded-full mr-2"></div>
+                                <div class="h-3 bg-gray-800 w-16"></div>
+                            </div>
+                            <div class="flex space-x-4">
+                                <div class="flex items-center">
+                                    <div class="h-3 bg-gray-800 w-8"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="repo-placeholder bg-secondary border border-gray-800 p-6">
+                    <div class="animate-pulse">
+                        <div class="h-5 bg-gray-800 w-3/4 mb-4"></div>
+                        <div class="h-3 bg-gray-800 w-full mb-2"></div>
+                        <div class="h-3 bg-gray-800 w-5/6 mb-6"></div>
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center">
+                                <div class="w-3 h-3 bg-gray-800 rounded-full mr-2"></div>
+                                <div class="h-3 bg-gray-800 w-16"></div>
+                            </div>
+                            <div class="flex space-x-4">
+                                <div class="flex items-center">
+                                    <div class="h-3 bg-gray-800 w-8"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Footer Section -->
+        <footer class="text-center py-6 border-t border-gray-800">
+            <div class="flex justify-center space-x-6 mb-4">
+                <a href="https://github.com/AmirAnsarpour" class="text-white hover:text-gray-400 transition-all duration-300" aria-label="GitHub">
+                    <i class="fab fa-github text-2xl"></i>
+                </a>
+                <a href="https://instagram.com/AmirAnsarpour_" class="text-white hover:text-gray-400 transition-all duration-300" aria-label="Instagram">
+                    <i class="fab fa-instagram text-2xl"></i>
+                </a>
+                <a href="https://youtube.com/@AmirAnsarpour" class="text-white hover:text-gray-400 transition-all duration-300" aria-label="YouTube">
+                    <i class="fab fa-youtube text-2xl"></i>
+                </a>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Particles.js -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <!-- Custom Scripts -->
+    <script src="js/script.js"></script>
+    <script src="js/github.js"></script>
+</body>
 </html>
