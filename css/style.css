@@ -1,143 +1,158 @@
-/* Custom styles */
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-  background-color: #000000;
-  color: #ffffff;
-  overflow-x: hidden;
+  font-family: "Space Grotesk", sans-serif;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
 }
 
-/* Snowflake noise effect */
-.film-grain {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
+/* Header Grid Fix */
+@media (min-width: 768px) {
+  .md\:auto-rows-fr {
+    grid-auto-rows: 1fr;
+  }
+}
+
+/* Glass UI Elements */
+.glass-card {
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2.5rem;
   height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-  z-index: 100;
 }
 
-.snowflake {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  background-color: #fff;
-  border-radius: 50%;
-  opacity: 0.6;
-  box-shadow: 0 0 2px rgba(255, 255, 255, 0.8);
-  will-change: transform, opacity;
+.glass-nav {
+  background: rgba(10, 10, 10, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 100px;
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
-/* Preserve the canvas animation from the original site */
-canvas {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-/* Particles.js container */
-#particles-js {
-  width: 100%;
-  height: 100%;
-  position: fixed;
-  z-index: 0;
-  top: 0;
-  left: 0;
-}
-
-/* Repository card hover effect */
 .repo-card {
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: block;
-  text-decoration: none;
-  color: #ffffff;
-  position: relative;
-  overflow: hidden;
-  border: 1px solid #1a1a1a;
-  background-color: #111111;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .repo-card:hover {
-  transform: translateY(-5px);
-  border-color: #ffffff;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  transform: scale(1.02) translateY(-10px);
+  background: rgba(255, 255, 255, 0.07);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.repo-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 2px;
-  background: linear-gradient(90deg, transparent, #ffffff, transparent);
-  transition: 0.5s;
-}
-
-.repo-card:hover::before {
-  left: 100%;
-}
-
-.repo-card .repo-name {
-  font-weight: 600;
-  margin-bottom: 8px;
-  color: #ffffff;
-  font-size: 1.1rem;
-}
-
-.repo-card .repo-description {
-  color: #a0a0a0;
-  margin-bottom: 16px;
-}
-
-.repo-card .repo-stats {
+/* Custom Dropdown Styling */
+.glass-dropdown-btn {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 0.6rem 1.2rem;
+  border-radius: 14px;
+  font-size: 0.75rem;
+  font-weight: 700;
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  font-size: 0.85rem;
-  color: #777777;
+  gap: 10px;
+  color: #d1d5db;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.repo-card .language-dot {
-  display: inline-block;
-  width: 10px;
-  height: 10px;
+.glass-dropdown-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.glass-dropdown-menu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 12px);
+  width: 195px;
+  background: rgba(15, 15, 15, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  z-index: 100;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  transform: scale(0.95);
+  opacity: 0;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.glass-dropdown-menu.show {
+  transform: scale(1);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.sort-option {
+  width: 100%;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #9ca3af;
+  border-radius: 12px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.sort-option:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.sort-option.active {
+  color: #60a5fa;
+  background: rgba(96, 165, 250, 0.05);
+}
+
+.rotate-arrow {
+  transform: rotate(180deg);
+}
+
+/* Utils */
+.social-btn {
+  width: 54px;
+  height: 54px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.1rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.social-btn:hover {
+  background: white;
+  color: black;
+  transform: translateY(-5px);
+}
+
+.lang-dot {
+  width: 9px;
+  height: 9px;
   border-radius: 50%;
-  margin-right: 6px;
+  display: inline-block;
+  margin-right: 8px;
 }
 
-/* Repository placeholder styling */
-.repo-placeholder {
-  background-color: #111111;
-  border: 1px solid #1a1a1a;
-}
-
-/* Description line clamp for 2 lines */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  height: 2.6em;
-}
-
-/* Custom scrollbar */
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
 }
-
 ::-webkit-scrollbar-track {
-  background: #111111;
+  background: #050505;
 }
-
 ::-webkit-scrollbar-thumb {
-  background: #ffffff;
-  border-radius: 0;
+  background: #333;
+  border-radius: 10px;
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: #888888;
-} 
