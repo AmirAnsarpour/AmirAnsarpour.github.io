@@ -1,19 +1,92 @@
 @import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
 
+/* ========================
+   BASE
+   ======================== */
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   font-family: "Space Grotesk", sans-serif;
   scroll-behavior: smooth;
   -webkit-font-smoothing: antialiased;
+  margin: 0;
+  cursor: default;
 }
 
-/* Header Grid Fix */
+/* ========================
+   CURSOR GLOW
+   ======================== */
+
+#cursor-glow {
+  position: fixed;
+  width: 300px;
+  height: 300px;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
+  background: radial-gradient(
+    circle,
+    rgba(96, 165, 250, 0.07) 0%,
+    rgba(96, 165, 250, 0.03) 30%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  will-change: transform, opacity;
+}
+
+#cursor-glow.active {
+  opacity: 1;
+}
+
+/* Hide on touch devices */
+@media (hover: none) {
+  #cursor-glow {
+    display: none !important;
+  }
+}
+
+/* ========================
+   TYPING ANIMATION
+   ======================== */
+
+.typing-cursor {
+  display: inline-block;
+  color: #60a5fa;
+  font-weight: 200;
+  animation: blink 1s infinite;
+  margin-left: 2px;
+}
+
+@keyframes blink {
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
+}
+
+/* ========================
+   HEADER GRID FIX
+   ======================== */
+
 @media (min-width: 768px) {
   .md\:auto-rows-fr {
     grid-auto-rows: 1fr;
   }
 }
 
-/* Glass UI Elements */
+/* ========================
+   GLASS UI ELEMENTS
+   ======================== */
+
 .glass-card {
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(30px);
@@ -31,6 +104,174 @@ body {
   box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
 }
 
+/* ========================
+   STATS COUNTER
+   ======================== */
+
+.stats-item {
+  border-radius: 2rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.stats-item:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.counter {
+  background: linear-gradient(135deg, #ffffff 0%, #60a5fa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ========================
+   TECH STACK
+   ======================== */
+
+.tech-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1.5rem;
+  padding: 1.5rem 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: default;
+  text-decoration: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.tech-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.tech-card:hover {
+  transform: translateY(-5px) scale(1.02);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.tech-card:hover::before {
+  opacity: 1;
+}
+
+.tech-card .tech-icon {
+  font-size: 2rem;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tech-card:hover .tech-icon {
+  transform: scale(1.15);
+}
+
+.tech-card .tech-name {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  transition: color 0.3s ease;
+}
+
+.tech-card:hover .tech-name {
+  color: #e5e7eb;
+}
+
+/* Percentage bar */
+.tech-bar-container {
+  width: 100%;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 4px;
+}
+
+.tech-bar {
+  height: 100%;
+  border-radius: 10px;
+  transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+  /* Start from 0 for animation */
+  animation: barGrow 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes barGrow {
+  from {
+    width: 0% !important;
+  }
+}
+
+.tech-percentage {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  opacity: 0.8;
+  transition: opacity 0.3s ease;
+}
+
+.tech-card:hover .tech-percentage {
+  opacity: 1;
+}
+
+/* Staggered tech card entrance */
+.tech-card {
+  opacity: 0;
+  animation: fadeInUp 0.4s ease forwards;
+}
+
+.tech-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.tech-card:nth-child(2) {
+  animation-delay: 0.08s;
+}
+.tech-card:nth-child(3) {
+  animation-delay: 0.11s;
+}
+.tech-card:nth-child(4) {
+  animation-delay: 0.14s;
+}
+.tech-card:nth-child(5) {
+  animation-delay: 0.17s;
+}
+.tech-card:nth-child(6) {
+  animation-delay: 0.2s;
+}
+.tech-card:nth-child(7) {
+  animation-delay: 0.23s;
+}
+.tech-card:nth-child(8) {
+  animation-delay: 0.26s;
+}
+.tech-card:nth-child(9) {
+  animation-delay: 0.29s;
+}
+.tech-card:nth-child(10) {
+  animation-delay: 0.32s;
+}
+.tech-card:nth-child(11) {
+  animation-delay: 0.35s;
+}
+.tech-card:nth-child(12) {
+  animation-delay: 0.38s;
+}
+
+/* ========================
+   REPO CARDS
+   ======================== */
+
 .repo-card {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -40,6 +281,9 @@ body {
   flex-direction: column;
   justify-content: space-between;
   transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  /* staggered animation */
+  opacity: 0;
+  animation: fadeInUp 0.5s ease forwards;
 }
 
 .repo-card:hover {
@@ -48,7 +292,92 @@ body {
   border-color: rgba(255, 255, 255, 0.2);
 }
 
-/* Custom Dropdown Styling */
+/* Staggered card entrance */
+.repo-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.repo-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.repo-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.repo-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.repo-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.repo-card:nth-child(6) {
+  animation-delay: 0.3s;
+}
+.repo-card:nth-child(7) {
+  animation-delay: 0.35s;
+}
+.repo-card:nth-child(8) {
+  animation-delay: 0.4s;
+}
+.repo-card:nth-child(9) {
+  animation-delay: 0.45s;
+}
+.repo-card:nth-child(10) {
+  animation-delay: 0.5s;
+}
+.repo-card:nth-child(11) {
+  animation-delay: 0.55s;
+}
+.repo-card:nth-child(12) {
+  animation-delay: 0.6s;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Skeleton loading cards */
+.skeleton-card {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 2rem;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 220px;
+}
+
+.skeleton-card .skeleton-line {
+  border-radius: 8px;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+/* ========================
+   CUSTOM DROPDOWN
+   ======================== */
+
 .glass-dropdown-btn {
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -62,6 +391,7 @@ body {
   color: #d1d5db;
   cursor: pointer;
   transition: all 0.3s ease;
+  font-family: inherit;
 }
 
 .glass-dropdown-btn:hover {
@@ -102,6 +432,9 @@ body {
   border-radius: 12px;
   transition: all 0.2s ease;
   cursor: pointer;
+  background: none;
+  border: none;
+  font-family: inherit;
 }
 
 .sort-option:hover {
@@ -118,7 +451,10 @@ body {
   transform: rotate(180deg);
 }
 
-/* Utils */
+/* ========================
+   SOCIAL BUTTONS
+   ======================== */
+
 .social-btn {
   width: 54px;
   height: 54px;
@@ -137,15 +473,23 @@ body {
   transform: translateY(-5px);
 }
 
+/* ========================
+   UTILITIES
+   ======================== */
+
 .lang-dot {
   width: 9px;
   height: 9px;
   border-radius: 50%;
   display: inline-block;
   margin-right: 8px;
+  flex-shrink: 0;
 }
 
-/* Custom Scrollbar */
+/* ========================
+   CUSTOM SCROLLBAR
+   ======================== */
+
 ::-webkit-scrollbar {
   width: 6px;
 }
@@ -155,4 +499,40 @@ body {
 ::-webkit-scrollbar-thumb {
   background: #333;
   border-radius: 10px;
+}
+
+/* ========================
+   MOBILE RESPONSIVE
+   ======================== */
+
+@media (max-width: 640px) {
+  .glass-card {
+    border-radius: 1.5rem;
+  }
+
+  .repo-card {
+    border-radius: 1.25rem;
+    padding: 1.25rem;
+  }
+
+  .tech-card {
+    border-radius: 1.25rem;
+    padding: 1.25rem 0.75rem;
+  }
+
+  .stats-item {
+    border-radius: 1.25rem;
+  }
+
+  .glass-nav {
+    font-size: 0.85rem;
+    gap: 0.75rem;
+    padding: 0.6rem 1rem;
+  }
+
+  .social-btn {
+    width: 46px;
+    height: 46px;
+    border-radius: 0.9rem;
+  }
 }

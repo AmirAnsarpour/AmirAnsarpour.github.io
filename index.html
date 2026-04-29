@@ -4,6 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Amir Ansarpour | Developer</title>
+
+    <!-- SEO & Open Graph -->
+    <meta
+      name="description"
+      content="Amir Ansarpour - Developer & Creator. Open source projects and portfolio."
+    />
+    <meta
+      name="keywords"
+      content="developer, programmer, open source, portfolio, Amir Ansarpour"
+    />
+    <meta name="author" content="Amir Ansarpour" />
+    <meta property="og:title" content="Amir Ansarpour | Developer" />
+    <meta
+      property="og:description"
+      content="Exploring the digital frontier with high-end aesthetics and smooth experiences."
+    />
+    <meta property="og:image" content="img/me.png" />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://ansarpour.org" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Amir Ansarpour | Developer" />
+    <meta
+      name="twitter:description"
+      content="Exploring the digital frontier with high-end aesthetics and smooth experiences."
+    />
+    <meta name="twitter:image" content="img/me.png" />
+
+    <!-- Preconnect -->
+    <link rel="preconnect" href="https://api.github.com" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+
     <link rel="icon" type="image/png" href="img/fire.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link
@@ -22,8 +55,14 @@
     </script>
   </head>
   <body class="bg-iosBg text-white selection:bg-blue-500 selection:text-white">
+    <!-- Cursor Glow -->
+    <div id="cursor-glow" aria-hidden="true"></div>
+
     <!-- Ambient Background Glows -->
-    <div class="fixed inset-0 overflow-hidden pointer-events-none">
+    <div
+      class="fixed inset-0 overflow-hidden pointer-events-none"
+      aria-hidden="true"
+    >
       <div
         class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full"
       ></div>
@@ -32,23 +71,40 @@
       ></div>
     </div>
 
+    <!-- Particle Canvas Container -->
+    <div
+      id="particle-container"
+      class="fixed inset-0 pointer-events-none z-[1]"
+      aria-hidden="true"
+    ></div>
+
     <div class="relative z-10 max-w-6xl mx-auto px-6 py-10">
       <!-- Navigation -->
-      <nav class="sticky top-6 z-50 flex justify-center mb-16">
+      <nav
+        class="sticky top-6 z-50 flex justify-center mb-16"
+        aria-label="Main navigation"
+      >
         <div
           class="glass-nav px-6 py-3 flex items-center gap-8 border border-white/10"
         >
           <a
             href="#"
             class="font-bold tracking-tight hover:text-blue-400 transition-colors"
+            aria-label="Home"
             >Amir Ansarpour</a
           >
-          <div class="h-4 w-[1px] bg-white/20"></div>
+          <div class="h-4 w-[1px] bg-white/20" aria-hidden="true"></div>
           <a
             target="_blank"
             href="https://ansarpour.org"
             class="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity"
+            rel="noopener noreferrer"
             >Main</a
+          >
+          <a
+            href="#tech-stack"
+            class="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity"
+            >Stack</a
           >
           <a
             href="#repositories"
@@ -65,24 +121,49 @@
         <div
           class="md:col-span-2 glass-card p-8 md:p-12 flex flex-col justify-center"
         >
-          <h2
+          <h1
             class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-4 leading-[1.1]"
           >
-            Developer.<br /><span class="text-gray-500">Creator.</span>
-          </h2>
+            <!-- Typing Animation Target -->
+            <span id="typing-text"></span
+            ><span id="typing-cursor" class="typing-cursor">|</span>
+          </h1>
           <p class="text-lg md:text-xl text-gray-400 max-w-md mb-8">
             Exploring the digital frontier with a focus on high-end aesthetics
             and smooth experiences.
           </p>
           <div class="flex gap-4">
-            <a href="https://github.com/AmirAnsarpour" class="social-btn"
-              ><i class="fab fa-github text-xl"></i
+            <a
+              href="https://github.com/AmirAnsarpour"
+              class="social-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="GitHub Profile"
+              ><i class="fab fa-github text-xl" aria-hidden="true"></i
             ></a>
-            <a href="https://instagram.com/AmirAnsarpour_" class="social-btn"
-              ><i class="fab fa-instagram text-xl"></i
+            <a
+              href="https://t.me/AmirAnsarpour"
+              class="social-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Telegram"
+              ><i class="fab fa-telegram text-xl" aria-hidden="true"></i
             ></a>
-            <a href="https://youtube.com/@AmirAnsarpour" class="social-btn"
-              ><i class="fab fa-youtube text-xl"></i
+            <a
+              href="https://instagram.com/AmirAnsarpour_"
+              class="social-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="Instagram"
+              ><i class="fab fa-instagram text-xl" aria-hidden="true"></i
+            ></a>
+            <a
+              href="https://youtube.com/@AmirAnsarpour"
+              class="social-btn"
+              target="_blank"
+              rel="noopener noreferrer"
+              aria-label="YouTube"
+              ><i class="fab fa-youtube text-xl" aria-hidden="true"></i
             ></a>
           </div>
         </div>
@@ -91,22 +172,103 @@
           <div class="relative w-48 h-48 md:w-64 md:h-64 group">
             <img
               src="img/me.png"
-              alt="Amir Ansarpour"
+              alt="Portrait of Amir Ansarpour, Developer and Creator"
               class="rounded-full w-full h-full object-cover border-4 border-white/20 shadow-2xl transition-transform duration-500 group-hover:border-white/40"
+              loading="eager"
+              width="256"
+              height="256"
             />
             <div
               class="absolute inset-0 rounded-full bg-blue-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+              aria-hidden="true"
             ></div>
           </div>
         </div>
       </header>
 
-      <!-- Repositories -->
-      <section id="repositories">
+      <!-- Stats Counter Section -->
+      <section id="stats" class="mb-20" aria-label="GitHub Statistics">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+          <div
+            class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
+          >
+            <div
+              class="text-3xl md:text-5xl font-extrabold tracking-tighter mb-2"
+            >
+              <span class="counter" data-target="0" id="stat-repos">0</span>
+            </div>
+            <span
+              class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-[0.2em]"
+              >Repositories</span
+            >
+          </div>
+          <div
+            class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
+          >
+            <div
+              class="text-3xl md:text-5xl font-extrabold tracking-tighter mb-2"
+            >
+              <span class="counter" data-target="0" id="stat-stars">0</span>
+            </div>
+            <span
+              class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-[0.2em]"
+              >Total Stars</span
+            >
+          </div>
+          <div
+            class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
+          >
+            <div
+              class="text-3xl md:text-5xl font-extrabold tracking-tighter mb-2"
+            >
+              <span class="counter" data-target="0" id="stat-forks">0</span>
+            </div>
+            <span
+              class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-[0.2em]"
+              >Total Forks</span
+            >
+          </div>
+          <div
+            class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
+          >
+            <div
+              class="text-3xl md:text-5xl font-extrabold tracking-tighter mb-2"
+            >
+              <span class="counter" data-target="0" id="stat-langs">0</span>
+            </div>
+            <span
+              class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-[0.2em]"
+              >Languages</span
+            >
+          </div>
+        </div>
+      </section>
+
+      <!-- Tech Stack Section -->
+      <section id="tech-stack" class="mb-20" aria-label="Tech Stack">
         <div
           class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 px-4 gap-4"
         >
-          <h3 class="text-3xl font-bold tracking-tight">Open Source</h3>
+          <h2 class="text-3xl font-bold tracking-tight">Tech Stack</h2>
+          <span
+            class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]"
+            >Tools I Work With</span
+          >
+        </div>
+        <div
+          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
+          id="tech-grid"
+        >
+          <!-- JS injects tech cards -->
+        </div>
+      </section>
+
+      <!-- Repositories -->
+      <section id="repositories" aria-label="Open Source Projects">
+        <div
+          class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 px-4 gap-4"
+        >
+          <h2 class="text-3xl font-bold tracking-tight">Open Source</h2>
 
           <!-- Custom Glass Dropdown -->
           <div class="relative inline-block text-left" id="sort-dropdown">
@@ -115,26 +277,47 @@
                 class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]"
                 >Sort By</span
               >
-              <button type="button" id="sort-button" class="glass-dropdown-btn">
+              <button
+                type="button"
+                id="sort-button"
+                class="glass-dropdown-btn"
+                aria-haspopup="true"
+                aria-expanded="false"
+                aria-controls="sort-menu"
+              >
                 <span id="current-sort">Most Stars</span>
                 <i
                   class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"
+                  aria-hidden="true"
                 ></i>
               </button>
             </div>
 
-            <div id="sort-menu" class="glass-dropdown-menu hidden">
+            <div
+              id="sort-menu"
+              class="glass-dropdown-menu hidden"
+              role="menu"
+              aria-label="Sort options"
+            >
               <div class="py-2 px-1">
-                <button class="sort-option active" data-value="stars">
+                <button
+                  class="sort-option active"
+                  data-value="stars"
+                  role="menuitem"
+                >
                   Most Stars
                 </button>
-                <button class="sort-option" data-value="forks">
+                <button class="sort-option" data-value="forks" role="menuitem">
                   Most Forks
                 </button>
-                <button class="sort-option" data-value="updated">
+                <button
+                  class="sort-option"
+                  data-value="updated"
+                  role="menuitem"
+                >
                   Recently Updated
                 </button>
-                <button class="sort-option" data-value="name">
+                <button class="sort-option" data-value="name" role="menuitem">
                   Name (A-Z)
                 </button>
               </div>
@@ -145,8 +328,24 @@
         <div
           id="repositories-grid"
           class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+          aria-live="polite"
         >
           <!-- JS will inject cards here -->
+        </div>
+
+        <!-- View All Button -->
+        <div
+          class="text-center mt-10"
+          id="view-all-container"
+          style="display: none"
+        >
+          <button
+            id="view-all-btn"
+            class="glass-dropdown-btn px-6 py-3 text-sm"
+          >
+            View All Projects
+            <i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i>
+          </button>
         </div>
       </section>
 
@@ -161,6 +360,13 @@
       </footer>
     </div>
 
+    <script src="js/particles.js"></script>
     <script src="js/github.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script src="js/cursor.js"></script>
+    <script src="js/typing.js"></script>
+    <script src="js/stats.js"></script>
+    <script src="js/techstack.js"></script>
+    <script src="js/main.js"></script>
   </body>
 </html>
