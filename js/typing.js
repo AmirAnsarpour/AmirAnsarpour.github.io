@@ -6,10 +6,9 @@
 (function () {
   const phrases = [
     "Developer.",
-    "Creator.",
-    "Open Source.",
-    "Problem Solver.",
-    "Code Lover.",
+    "Breaks Things.",
+    "Fixes Them.",
+    "Works. Usually.",
   ];
 
   const el = document.getElementById("typing-text");
