@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sortOptions.forEach((opt) => opt.classList.remove("active"));
       option.classList.add("active");
 
-      handleSort(val);
+      window.Portfolio.handleSort(val);
       closeMenu();
     });
   });

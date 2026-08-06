@@ -1,0 +1,38 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(file img/*.png)",
+      "Bash(sips -g space img/me.png)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" https://api.github.com/users/AmirAnsarpour --max-time 5)",
+      "Bash(git rm *)",
+      "Bash(curl -s \"https://api.github.com/users/AmirAnsarpour/repos?per_page=100\")",
+      "Bash(node -e ' *)",
+      "Bash(curl -sI \"https://api.github.com/users/AmirAnsarpour/repos\")",
+      "Bash(node scripts/fetch-github-data.js)",
+      "Bash(node -e \"console.log\\(Object.keys\\(JSON.parse\\(require\\('fs'\\).readFileSync\\('data/repo-languages.json'\\)\\)\\).length\\)\")",
+      "Bash(command -v chromium)",
+      "Bash(command -v google-chrome)",
+      "Bash(command -v \"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome\")",
+      "Read(//Applications/Google Chrome.app/**)",
+      "Bash(npx --yes playwright --version)",
+      "Read(//private/tmp/**)",
+      "Bash(pkill -f \"http.server 8934\")",
+      "Bash(pkill -f \"headless=new\")",
+      "Bash(python3 -c ' *)",
+      "Bash(npm ls *)",
+      "Bash(node -e \"require.resolve\\('playwright'\\)\")",
+      "Bash(timeout 20 npx --yes playwright --version)",
+      "Bash(python3 -m http.server 8934)",
+      "Bash(npm init *)",
+      "Bash(npm install *)",
+      "Bash(node test-viewall.js)",
+      "Bash(node test-viewall2.js)",
+      "Bash(node test-scroll.js)",
+      "Bash(cat /tmp/server.log; echo \"---port---\"; lsof -i :8934 2>/dev/null; echo \"---chrome procs---\"; ps aux | grep -i \"Google Chrome\" | grep -v grep | wc -l)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8934/index.html)",
+      "Bash(node shot.js)",
+      "Bash(node --check /Users/amir/Main/github/AmirAnsarpour.github.io/js/tilt.js)",
+      "Bash(node --check /Users/amir/Main/github/AmirAnsarpour.github.io/js/github.js)"
+    ]
+  }
+}

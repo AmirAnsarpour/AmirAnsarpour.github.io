@@ -50,7 +50,8 @@
    * Called by github.js after data is loaded
    */
   function updateStats() {
-    if (typeof cachedRepos === "undefined" || cachedRepos.length === 0) return;
+    const cachedRepos = window.Portfolio && window.Portfolio.cachedRepos;
+    if (!Array.isArray(cachedRepos) || cachedRepos.length === 0) return;
 
     const totalRepos = cachedRepos.length;
     const totalStars = cachedRepos.reduce(
@@ -124,6 +125,7 @@
     observer.observe(statsSection);
   }
 
-  // Expose globally
-  window.updateStats = updateStats;
+  // Expose on the shared namespace
+  window.Portfolio = window.Portfolio || {};
+  window.Portfolio.updateStats = updateStats;
 })();

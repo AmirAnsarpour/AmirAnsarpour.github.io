@@ -6,7 +6,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ========================
   // Fetch GitHub repos
   // ========================
-  fetchRepositories("AmirAnsarpour");
+  window.Portfolio.fetchRepositories(window.SITE_CONFIG.githubUsername);
 
   // ========================
   // Smooth scrolling for anchor links
@@ -36,54 +36,97 @@ document.addEventListener("DOMContentLoaded", () => {
   const viewAllBtn = document.getElementById("view-all-btn");
   if (viewAllBtn) {
     viewAllBtn.addEventListener("click", () => {
-      showingAll = !showingAll;
+      window.Portfolio.showingAll = !window.Portfolio.showingAll;
+      window.Portfolio.updateViewAllButton();
 
-      const activeOption = document.querySelector(".sort-option.active");
-      const currentSort = activeOption
-        ? activeOption.getAttribute("data-value")
-        : "stars";
-
-      handleSort(currentSort);
-      updateViewAllButton();
-
-      if (!showingAll) {
-        const section = document.getElementById("repositories");
-        if (section) {
-          const navHeight = 80;
-          const targetPos =
-            section.getBoundingClientRect().top + window.scrollY - navHeight;
-          window.scrollTo({
-            top: targetPos,
-            behavior: "smooth",
-          });
+      window.Portfolio.toggleShowAll(() => {
+        // Only scroll once the grid has settled at its final height —
+        // scrolling while the extra cards are still collapsing makes the
+        // browser's own scroll clamping fight the smooth animation.
+        if (!window.Portfolio.showingAll) {
+          const section = document.getElementById("repositories");
+          if (section) {
+            const navHeight = 80;
+            const targetPos =
+              section.getBoundingClientRect().top + window.scrollY - navHeight;
+            window.scrollTo({
+              top: targetPos,
+              behavior: "smooth",
+            });
+          }
         }
-      }
+      });
     });
   }
 
   // ========================
-  // Navbar hide/show on scroll
+  // Clear Tech Stack language filter
+  // ========================
+  const clearFilterBtn = document.getElementById("clear-filter-btn");
+  if (clearFilterBtn) {
+    clearFilterBtn.addEventListener("click", () => {
+      window.Portfolio.setLanguageFilter(null);
+    });
+  }
+
+  // ========================
+  // Navbar hide/show + scroll progress + back-to-top
   // ========================
   let lastScrollY = window.scrollY;
   const nav = document.querySelector("nav");
+  const navPill = document.querySelector(".glass-nav");
+  const progressBar = document.getElementById("scroll-progress");
+  const backToTopBtn = document.getElementById("back-to-top");
+  let scrollTicking = false;
+
+  function updateOnScroll() {
+    const currentScrollY = window.scrollY;
+
+    if (currentScrollY > lastScrollY && currentScrollY > 200) {
+      nav.style.transform = "translateY(-120%)";
+      nav.style.transition = "transform 0.3s ease";
+    } else {
+      nav.style.transform = "translateY(0)";
+      nav.style.transition = "transform 0.3s ease";
+    }
+
+    if (navPill) {
+      navPill.classList.toggle("scrolled", currentScrollY > 20);
+    }
+
+    if (progressBar) {
+      const docHeight =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const progress = docHeight > 0 ? (currentScrollY / docHeight) * 100 : 0;
+      progressBar.style.width = `${Math.min(100, Math.max(0, progress))}%`;
+    }
+
+    if (backToTopBtn) {
+      backToTopBtn.classList.toggle("visible", currentScrollY > 500);
+    }
+
+    lastScrollY = currentScrollY;
+    scrollTicking = false;
+  }
+
+  if (backToTopBtn) {
+    backToTopBtn.addEventListener("click", () => {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    });
+  }
 
   window.addEventListener(
     "scroll",
     () => {
-      const currentScrollY = window.scrollY;
-
-      if (currentScrollY > lastScrollY && currentScrollY > 200) {
-        nav.style.transform = "translateY(-120%)";
-        nav.style.transition = "transform 0.3s ease";
-      } else {
-        nav.style.transform = "translateY(0)";
-        nav.style.transition = "transform 0.3s ease";
+      if (!scrollTicking) {
+        requestAnimationFrame(updateOnScroll);
+        scrollTicking = true;
       }
-
-      lastScrollY = currentScrollY;
     },
     { passive: true }
   );
+
+  updateOnScroll();
 
   // ========================
   // Intersection Observer for sections

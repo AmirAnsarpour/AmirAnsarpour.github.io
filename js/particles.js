@@ -6,6 +6,12 @@
 (function () {
   const PARTICLE_COUNT = 120;
   let canvas, ctx, particles, animationId;
+  let particleRGB = "255,255,255";
+
+  function updateParticleColor() {
+    const isLight = document.documentElement.getAttribute("data-theme") === "light";
+    particleRGB = isLight ? "10,10,15" : "255,255,255";
+  }
 
   function init() {
     const container = document.getElementById("particle-container");
@@ -17,6 +23,8 @@
     container.appendChild(canvas);
 
     resize();
+    updateParticleColor();
+    window.addEventListener("themechange", updateParticleColor);
 
     particles = Array.from({ length: PARTICLE_COUNT }, () => createParticle());
 
@@ -98,7 +106,7 @@
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(255,255,255,${alpha})`;
+      ctx.fillStyle = `rgba(${particleRGB},${alpha})`;
       ctx.fill();
     });
 

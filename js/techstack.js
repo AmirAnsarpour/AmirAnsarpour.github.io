@@ -1,64 +1,21 @@
 /**
- * Tech Stack Section — Dynamic from GitHub
- * Fetches real language usage from all repos and shows percentages
+ * Tech Stack Section — language usage across all repos, shown as percentages.
+ * Reads the pre-generated data/languages.json snapshot first (no per-repo
+ * API calls, no rate limit); falls back to live per-repo /languages calls
+ * only if that snapshot isn't available.
  */
 
 (function () {
-  const techMeta = {
-    JavaScript: { icon: "fa-brands fa-js", color: "#f1e05a" },
-    TypeScript: { icon: "fa-brands fa-js", color: "#3178c6" },
-    Python: { icon: "fa-brands fa-python", color: "#3572A5" },
-    Go: { icon: "fa-brands fa-golang", color: "#00ADD8" },
-    HTML: { icon: "fa-brands fa-html5", color: "#e34c26" },
-    CSS: { icon: "fa-brands fa-css3-alt", color: "#563d7c" },
-    SCSS: { icon: "fa-brands fa-sass", color: "#c6538c" },
-    Less: { icon: "fa-brands fa-less", color: "#1d365d" },
-    Java: { icon: "fa-brands fa-java", color: "#b07219" },
-    Kotlin: { icon: "fa-solid fa-k", color: "#A97BFF" },
-    Swift: { icon: "fa-brands fa-swift", color: "#F05138" },
-    Ruby: { icon: "fa-solid fa-gem", color: "#701516" },
-    PHP: { icon: "fa-brands fa-php", color: "#4F5D95" },
-    "C#": { icon: "fa-solid fa-hashtag", color: "#178600" },
-    "C++": { icon: "fa-solid fa-code", color: "#f34b7d" },
-    C: { icon: "fa-solid fa-c", color: "#555555" },
-    Rust: { icon: "fa-brands fa-rust", color: "#dea584" },
-    Dart: { icon: "fa-solid fa-d", color: "#00B4AB" },
-    Shell: { icon: "fa-solid fa-terminal", color: "#89e051" },
-    PowerShell: { icon: "fa-solid fa-terminal", color: "#012456" },
-    Lua: { icon: "fa-solid fa-moon", color: "#000080" },
-    Perl: { icon: "fa-solid fa-code", color: "#0298c3" },
-    R: { icon: "fa-solid fa-chart-line", color: "#198CE7" },
-    Vue: { icon: "fa-brands fa-vuejs", color: "#41b883" },
-    Svelte: { icon: "fa-solid fa-fire", color: "#ff3e00" },
-    Dockerfile: { icon: "fa-brands fa-docker", color: "#384d54" },
-    Makefile: { icon: "fa-solid fa-gears", color: "#427819" },
-    Nix: { icon: "fa-solid fa-snowflake", color: "#7e7eff" },
-    HCL: { icon: "fa-solid fa-cloud", color: "#5C4EE5" },
-    Scala: { icon: "fa-solid fa-s", color: "#c22d40" },
-    Elixir: { icon: "fa-solid fa-droplet", color: "#6e4a7e" },
-    Haskell: { icon: "fa-solid fa-h", color: "#5e5086" },
-    "Jupyter Notebook": { icon: "fa-solid fa-book", color: "#DA5B0B" },
-    "Vim Script": { icon: "fa-solid fa-v", color: "#199f4b" },
-    Zig: { icon: "fa-solid fa-z", color: "#ec915c" },
-    Assembly: { icon: "fa-solid fa-microchip", color: "#6E4C13" },
-    EJS: { icon: "fa-solid fa-file-code", color: "#a91e50" },
-    Astro: { icon: "fa-solid fa-rocket", color: "#ff5a03" },
-  };
-
-  const defaultMeta = { icon: "fa-solid fa-code", color: "#6b7280" };
-
   const CACHE_KEY = "github_techstack";
   const CACHE_EXPIRY = 30 * 60 * 1000;
+  const STATIC_LANGUAGES_URL = "data/languages.json";
+
+  function langMeta(lang) {
+    return (window.LANG_META && window.LANG_META[lang]) || window.DEFAULT_LANG_META;
+  }
 
   // ─── Skeleton ─────────────────────────────────────────────────────────────
 
-  /**
-   * Skeleton که دقیقاً شبیه کارت واقعیه:
-   * ردیف ۱: آیکون (circle) + فاصله
-   * ردیف ۲: اسم زبان (خط کوتاه)
-   * ردیف ۳: نوار درصد (خط بلند)
-   * ردیف ۴: عدد درصد (خط خیلی کوتاه)
-   */
   function renderTechSkeletons(count = 12) {
     const grid = document.getElementById("tech-grid");
     if (!grid) return;
@@ -68,7 +25,7 @@
         `<div class="tech-card tech-skeleton">
           <div class="skeleton-line" style="width:36px;height:36px;border-radius:50%;flex-shrink:0;"></div>
           <div class="skeleton-line" style="width:56px;height:11px;border-radius:6px;"></div>
-          <div class="skeleton-line" style="width:100%;height:3px;border-radius:10px;"></div>
+          <div class="skeleton-line" style="width:100%;height:5px;border-radius:10px;"></div>
           <div class="skeleton-line" style="width:32px;height:10px;border-radius:6px;"></div>
         </div>`,
       )
@@ -76,6 +33,13 @@
   }
 
   // ─── Fetch ─────────────────────────────────────────────────────────────────
+
+  async function fetchStaticLanguages() {
+    const res = await fetch(STATIC_LANGUAGES_URL, { cache: "no-store" });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data && typeof data === "object" && Object.keys(data).length ? data : null;
+  }
 
   async function fetchRepoLanguages(repoFullName) {
     try {
@@ -90,20 +54,17 @@
   }
 
   /**
-   * منتظر میمونه تا cachedRepos از github.js پر بشه
-   * بدون هیچ timeout ثابتی — polling واقعی
+   * Waits for window.Portfolio.cachedRepos (populated by github.js) —
+   * only needed on the live-API fallback path.
    */
   function waitForCachedRepos(maxWait = 10000) {
     return new Promise((resolve) => {
       const start = Date.now();
 
       function check() {
-        if (
-          typeof cachedRepos !== "undefined" &&
-          Array.isArray(cachedRepos) &&
-          cachedRepos.length > 0
-        ) {
-          resolve(cachedRepos);
+        const repos = window.Portfolio && window.Portfolio.cachedRepos;
+        if (Array.isArray(repos) && repos.length > 0) {
+          resolve(repos);
           return;
         }
         if (Date.now() - start > maxWait) {
@@ -117,25 +78,11 @@
     });
   }
 
-  async function fetchAllLanguages(username) {
-    // Cache check
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-      try {
-        const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_EXPIRY) {
-          return data;
-        }
-      } catch {
-        localStorage.removeItem(CACHE_KEY);
-      }
-    }
-
-    // منتظر repos بمون
+  async function fetchAllLanguagesLive(username) {
     const repos = await waitForCachedRepos();
+    let repoList = repos;
 
-    if (repos.length === 0) {
-      // Fallback: fetch directly
+    if (repoList.length === 0) {
       try {
         const res = await fetch(
           `https://api.github.com/users/${username}/repos?per_page=100`,
@@ -143,16 +90,15 @@
         if (!res.ok) return {};
         const data = await res.json();
         if (!Array.isArray(data)) return {};
-        repos.push(...data);
+        repoList = data;
       } catch {
         return {};
       }
     }
 
-    // Fetch languages با concurrency
     const CONCURRENCY = 5;
     const totalLangs = {};
-    const queue = repos.map((r) => r.full_name).filter(Boolean);
+    const queue = repoList.map((r) => r.full_name).filter(Boolean);
 
     while (queue.length > 0) {
       const batch = queue.splice(0, CONCURRENCY);
@@ -166,7 +112,27 @@
       });
     }
 
-    // Cache
+    return totalLangs;
+  }
+
+  async function fetchAllLanguages(username) {
+    const cached = localStorage.getItem(CACHE_KEY);
+    if (cached) {
+      try {
+        const { data, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_EXPIRY) {
+          return data;
+        }
+      } catch {
+        localStorage.removeItem(CACHE_KEY);
+      }
+    }
+
+    let totalLangs = await fetchStaticLanguages();
+    if (!totalLangs) {
+      totalLangs = await fetchAllLanguagesLive(username);
+    }
+
     localStorage.setItem(
       CACHE_KEY,
       JSON.stringify({ data: totalLangs, timestamp: Date.now() }),
@@ -185,9 +151,10 @@
 
     if (totalBytes === 0) {
       grid.innerHTML = `
-        <p class="col-span-full text-center text-gray-500 py-8 text-sm">
-          No language data available.
-        </p>`;
+        <div class="col-span-full text-center py-8">
+          <i class="fa-solid fa-code text-3xl text-gray-600 mb-4" aria-hidden="true"></i>
+          <p class="text-gray-500 text-sm">No language data available yet.</p>
+        </div>`;
       return;
     }
 
@@ -198,11 +165,11 @@
 
     grid.innerHTML = sorted
       .map(([lang, bytes]) => {
-        const meta = techMeta[lang] || defaultMeta;
+        const meta = langMeta(lang);
         const percentage = ((bytes / totalBytes) * 100).toFixed(1);
 
         return `
-          <div class="tech-card" title="${lang} — ${percentage}%">
+          <div class="tech-card" data-lang="${lang}" title="Filter projects by ${lang} — ${percentage}%" tabindex="0" role="button" aria-pressed="false">
             <div class="tech-icon" style="color:${meta.color};">
               <i class="${meta.icon}"></i>
             </div>
@@ -210,17 +177,55 @@
             <div class="tech-bar-container">
               <div class="tech-bar" style="width:${percentage}%;background:${meta.color};"></div>
             </div>
-            <span class="tech-percentage" style="color:${meta.color};">${percentage}%</span>
+            <span class="tech-percentage">${percentage}%</span>
           </div>`;
       })
       .join("");
+  }
+
+  // ─── Filter interaction ───────────────────────────────────────────────────
+
+  function initFilterInteraction() {
+    const grid = document.getElementById("tech-grid");
+    if (!grid) return;
+
+    function activate(card) {
+      const lang = card.getAttribute("data-lang");
+      if (lang && window.Portfolio && typeof window.Portfolio.setLanguageFilter === "function") {
+        window.Portfolio.setLanguageFilter(lang);
+      }
+    }
+
+    grid.addEventListener("click", (e) => {
+      const card = e.target.closest(".tech-card[data-lang]");
+      if (card) activate(card);
+    });
+
+    grid.addEventListener("keydown", (e) => {
+      if (e.key !== "Enter" && e.key !== " ") return;
+      const card = e.target.closest(".tech-card[data-lang]");
+      if (card) {
+        e.preventDefault();
+        activate(card);
+      }
+    });
+
+    window.addEventListener("languagefilterchange", (e) => {
+      const activeLang = e.detail && e.detail.lang;
+      grid.querySelectorAll(".tech-card[data-lang]").forEach((card) => {
+        const isActive = card.getAttribute("data-lang") === activeLang;
+        card.classList.toggle("active", isActive);
+        card.setAttribute("aria-pressed", String(isActive));
+      });
+    });
   }
 
   // ─── Init ──────────────────────────────────────────────────────────────────
 
   async function init() {
     renderTechSkeletons();
-    const langData = await fetchAllLanguages("AmirAnsarpour");
+    initFilterInteraction();
+    const langData = await fetchAllLanguages(window.SITE_CONFIG.githubUsername);
     renderTechStack(langData);
   }
 

@@ -1,0 +1,46 @@
+/**
+ * Single source of truth for language colors + icons.
+ * Used by github.js (repo cards) and techstack.js (tech stack grid).
+ */
+window.LANG_META = {
+  JavaScript: { icon: "fa-brands fa-js", color: "#f1e05a" },
+  TypeScript: { icon: "fa-brands fa-js", color: "#3178c6" },
+  Python: { icon: "fa-brands fa-python", color: "#3572A5" },
+  Go: { icon: "fa-brands fa-golang", color: "#00ADD8" },
+  HTML: { icon: "fa-brands fa-html5", color: "#e34c26" },
+  CSS: { icon: "fa-brands fa-css3-alt", color: "#563d7c" },
+  SCSS: { icon: "fa-brands fa-sass", color: "#c6538c" },
+  Less: { icon: "fa-brands fa-less", color: "#1d365d" },
+  Java: { icon: "fa-brands fa-java", color: "#b07219" },
+  Kotlin: { icon: "fa-solid fa-k", color: "#A97BFF" },
+  Swift: { icon: "fa-brands fa-swift", color: "#F05138" },
+  Ruby: { icon: "fa-solid fa-gem", color: "#701516" },
+  PHP: { icon: "fa-brands fa-php", color: "#4F5D95" },
+  "C#": { icon: "fa-solid fa-hashtag", color: "#178600" },
+  "C++": { icon: "fa-solid fa-code", color: "#f34b7d" },
+  C: { icon: "fa-solid fa-c", color: "#555555" },
+  Rust: { icon: "fa-brands fa-rust", color: "#dea584" },
+  Dart: { icon: "fa-solid fa-d", color: "#00B4AB" },
+  Shell: { icon: "fa-solid fa-terminal", color: "#89e051" },
+  PowerShell: { icon: "fa-solid fa-terminal", color: "#012456" },
+  Lua: { icon: "fa-solid fa-moon", color: "#000080" },
+  Perl: { icon: "fa-solid fa-code", color: "#0298c3" },
+  R: { icon: "fa-solid fa-chart-line", color: "#198CE7" },
+  Vue: { icon: "fa-brands fa-vuejs", color: "#41b883" },
+  Svelte: { icon: "fa-solid fa-fire", color: "#ff3e00" },
+  Dockerfile: { icon: "fa-brands fa-docker", color: "#384d54" },
+  Makefile: { icon: "fa-solid fa-gears", color: "#427819" },
+  Nix: { icon: "fa-solid fa-snowflake", color: "#7e7eff" },
+  HCL: { icon: "fa-solid fa-cloud", color: "#5C4EE5" },
+  Scala: { icon: "fa-solid fa-s", color: "#c22d40" },
+  Elixir: { icon: "fa-solid fa-droplet", color: "#6e4a7e" },
+  Haskell: { icon: "fa-solid fa-h", color: "#5e5086" },
+  "Jupyter Notebook": { icon: "fa-solid fa-book", color: "#DA5B0B" },
+  "Vim Script": { icon: "fa-solid fa-v", color: "#199f4b" },
+  Zig: { icon: "fa-solid fa-z", color: "#ec915c" },
+  Assembly: { icon: "fa-solid fa-microchip", color: "#6E4C13" },
+  EJS: { icon: "fa-solid fa-file-code", color: "#a91e50" },
+  Astro: { icon: "fa-solid fa-rocket", color: "#ff5a03" },
+};
+
+window.DEFAULT_LANG_META = { icon: "fa-solid fa-code", color: "#6b7280" };

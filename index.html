@@ -5,6 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Amir Ansarpour | Developer</title>
 
+    <!-- Apply the stored/system theme before first paint, to avoid a flash -->
+    <script>
+      (function () {
+        try {
+          var stored = localStorage.getItem("theme");
+          var theme =
+            stored ||
+            (window.matchMedia("(prefers-color-scheme: light)").matches
+              ? "light"
+              : "dark");
+          document.documentElement.setAttribute("data-theme", theme);
+        } catch (e) {
+          document.documentElement.setAttribute("data-theme", "dark");
+        }
+      })();
+    </script>
+
     <!-- SEO & Open Graph -->
     <meta
       name="description"
@@ -55,8 +72,29 @@
     </script>
   </head>
   <body class="bg-iosBg text-white selection:bg-blue-500 selection:text-white">
+    <noscript>
+      <div style="background:#111;color:#d1d5db;text-align:center;padding:14px 16px;font-size:13px;">
+        JavaScript is disabled, so live GitHub stats, tech stack and
+        repositories can't load here. Visit
+        <a href="https://github.com/AmirAnsarpour" style="color:#60a5fa;">github.com/AmirAnsarpour</a>
+        directly instead.
+      </div>
+    </noscript>
+    <!-- Scroll Progress -->
+    <div id="scroll-progress" aria-hidden="true"></div>
+
     <!-- Cursor Glow -->
     <div id="cursor-glow" aria-hidden="true"></div>
+
+    <!-- Back to Top -->
+    <button
+      id="back-to-top"
+      type="button"
+      class="back-to-top-btn"
+      aria-label="Back to top"
+    >
+      <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
+    </button>
 
     <!-- Ambient Background Glows -->
     <div
@@ -81,42 +119,29 @@
     <div class="relative z-10 max-w-6xl mx-auto px-6 py-10">
       <!-- Navigation -->
       <nav
-        class="sticky top-6 z-50 flex justify-center mb-16"
+        class="sticky top-4 md:top-6 z-50 flex justify-center mb-10 md:mb-16 px-4"
         aria-label="Main navigation"
       >
         <div
-          class="glass-nav px-6 py-3 flex items-center gap-8 border border-white/10"
+          class="glass-nav px-3 md:px-4 py-2 flex items-center gap-1 md:gap-2 border border-white/10"
         >
-          <a
-            href="#"
-            class="font-bold tracking-tight hover:text-blue-400 transition-colors"
-            aria-label="Home"
-            >Amir Ansarpour</a
-          >
-          <div class="h-4 w-[1px] bg-white/20" aria-hidden="true"></div>
-          <a
-            target="_blank"
-            href="https://ansarpour.org"
-            class="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity"
-            rel="noopener noreferrer"
-            >Main</a
-          >
-          <a
-            href="#tech-stack"
-            class="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity"
-            >Stack</a
-          >
-          <a
-            href="#repositories"
-            class="text-sm font-medium opacity-70 hover:opacity-100 transition-opacity"
-            >Projects</a
-          >
+          <a href="#" class="nav-brand" aria-label="Home">Amir Ansarpour</a>
+          <div class="h-4 w-[1px] bg-white/20 hidden md:block" aria-hidden="true"></div>
+          <a href="#tech-stack" class="nav-link">Stack</a>
+          <a href="#repositories" class="nav-link">Projects</a>
+          <div class="h-4 w-[1px] bg-white/20 hidden md:block" aria-hidden="true"></div>
+          <button
+            id="theme-toggle"
+            type="button"
+            class="theme-toggle-btn"
+            aria-label="Toggle color theme"
+          ></button>
         </div>
       </nav>
 
       <!-- Hero Section -->
       <header
-        class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20 md:auto-rows-fr"
+        class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 md:mb-20 md:auto-rows-fr"
       >
         <div
           class="md:col-span-2 glass-card p-8 md:p-12 flex flex-col justify-center"
@@ -168,11 +193,11 @@
         </div>
 
         <div class="glass-card flex items-center justify-center p-8">
-          <div class="relative w-48 h-48 md:w-64 md:h-64 group">
+          <div id="profile-tilt" class="relative w-48 h-48 md:w-64 md:h-64 group">
             <img
               src="img/me.png"
               alt="Portrait of Amir Ansarpour, Developer and Creator"
-              class="rounded-full w-full h-full object-cover border-4 border-white/20 shadow-2xl transition-transform duration-500 group-hover:border-white/40"
+              class="rounded-full w-full h-full object-cover border-4 border-white/20 shadow-2xl group-hover:border-white/40"
               loading="eager"
               width="256"
               height="256"
@@ -186,7 +211,7 @@
       </header>
 
       <!-- Stats Counter Section -->
-      <section id="stats" class="mb-20" aria-label="GitHub Statistics">
+      <section id="stats" class="mb-12 md:mb-20" aria-label="GitHub Statistics">
         <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
           <div
             class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
@@ -244,15 +269,20 @@
       </section>
 
       <!-- Tech Stack Section -->
-      <section id="tech-stack" class="mb-20" aria-label="Tech Stack">
+      <section id="tech-stack" class="mb-12 md:mb-20" aria-label="Tech Stack">
         <div
           class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 px-4 gap-4"
         >
           <h2 class="text-3xl font-bold tracking-tight">Tech Stack</h2>
-          <span
-            class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]"
-            >Tools I Work With</span
-          >
+          <div class="flex flex-col items-start md:items-end gap-1">
+            <span
+              class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]"
+              >Tools I Work With</span
+            >
+            <span
+              class="sync-timestamp text-gray-600 text-[9px] font-bold uppercase tracking-[0.15em]"
+            ></span>
+          </div>
         </div>
         <div
           class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
@@ -267,11 +297,25 @@
         <div
           class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 px-4 gap-4"
         >
-          <h2 class="text-3xl font-bold tracking-tight">Open Source</h2>
+          <div class="flex items-center gap-3 flex-wrap">
+            <h2 class="text-3xl font-bold tracking-tight">Open Source</h2>
+            <button
+              type="button"
+              id="clear-filter-btn"
+              class="glass-dropdown-btn filter-chip px-3 py-1.5 text-[11px]"
+            >
+              <i class="fa-solid fa-filter text-[10px]" aria-hidden="true"></i>
+              <span id="active-filter-label"></span>
+              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
+            </button>
+          </div>
 
           <!-- Custom Glass Dropdown -->
           <div class="relative inline-block text-left" id="sort-dropdown">
             <div class="flex items-center gap-3">
+              <span
+                class="sync-timestamp text-gray-600 text-[9px] font-bold uppercase tracking-[0.15em]"
+              ></span>
               <span
                 class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]"
                 >Sort By</span
@@ -349,7 +393,7 @@
       </section>
 
       <footer
-        class="mt-32 pb-10 text-center text-gray-600 text-xs font-bold tracking-[0.2em] uppercase"
+        class="mt-20 md:mt-32 pb-10 text-center text-gray-600 text-xs font-bold tracking-[0.2em] uppercase"
       >
         &copy;
         <script>
@@ -359,13 +403,18 @@
       </footer>
     </div>
 
+    <script src="js/config.js"></script>
+    <script src="js/lang-meta.js"></script>
+    <script src="js/theme.js"></script>
     <script src="js/particles.js"></script>
     <script src="js/github.js"></script>
     <script src="js/dropdown.js"></script>
     <script src="js/cursor.js"></script>
     <script src="js/typing.js"></script>
+    <script src="js/tilt.js"></script>
     <script src="js/stats.js"></script>
     <script src="js/techstack.js"></script>
+    <script src="js/sync-status.js"></script>
     <script src="js/main.js"></script>
   </body>
 </html>
