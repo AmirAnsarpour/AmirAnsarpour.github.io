@@ -1,8 +1,7 @@
 /**
- * GitHub repositories: reads the pre-generated data/repos.json snapshot
- * (built by scripts/fetch-github-data.js via the update-data workflow) so
- * the browser never has to hit api.github.com directly. Falls back to the
- * live API if the static snapshot isn't available yet.
+ * GitHub repositories: fetched straight from api.github.com in the
+ * browser (no build step, no server), cached in localStorage for 30
+ * minutes so repeat visits within that window don't re-hit the API.
  */
 
 window.Portfolio = window.Portfolio || {};
@@ -14,8 +13,7 @@ window.Portfolio = window.Portfolio || {};
   state.activeLanguageFilter = null;
 
   const DISPLAY_LIMIT = 9;
-  const STATIC_REPOS_URL = "data/repos.json";
-  const STATIC_REPO_LANGUAGES_URL = "data/repo-languages.json";
+  const LANGUAGE_FETCH_CONCURRENCY = 5;
   const CACHE_EXPIRY = 30 * 60 * 1000; // 30 minutes
 
   function langMeta(lang) {
@@ -43,7 +41,7 @@ window.Portfolio = window.Portfolio || {};
   }
 
   /**
-   * Fetch with retry logic (used only for the live-API fallback path)
+   * Fetch with retry logic
    */
   async function fetchWithRetry(url, retries = 3) {
     for (let i = 0; i < retries; i++) {
@@ -63,26 +61,39 @@ window.Portfolio = window.Portfolio || {};
   }
 
   /**
-   * Try the pre-generated static snapshot first — no rate limit, one request.
-   * Also merges in the per-repo language breakdown for the multi-color bar.
+   * Per-repo language breakdown, used for the multi-color bar on each
+   * card. Best-effort — a repo just falls back to its single primary
+   * `language` dot if this particular call fails.
    */
-  async function fetchStaticRepos() {
-    const res = await fetch(STATIC_REPOS_URL, { cache: "no-store" });
-    if (!res.ok) return null;
-    const repos = await res.json();
-    if (!Array.isArray(repos) || repos.length === 0) return null;
-
+  async function fetchRepoLanguages(fullName) {
     try {
-      const langRes = await fetch(STATIC_REPO_LANGUAGES_URL, { cache: "no-store" });
-      if (langRes.ok) {
-        const perRepoLangs = await langRes.json();
-        repos.forEach((repo) => {
-          repo.languages = perRepoLangs[repo.full_name] || null;
-        });
-      }
+      const res = await fetch(`https://api.github.com/repos/${fullName}/languages`);
+      if (!res.ok) return null;
+      return await res.json();
     } catch {
-      /* language breakdown is a nice-to-have, repo cards still work without it */
+      return null;
     }
+  }
+
+  /**
+   * Fetches the `/languages` breakdown for every repo, a handful at a
+   * time. Also doubles as the Tech Stack section's data source — see
+   * techstack.js, which aggregates these same `repo.languages` values
+   * instead of fetching them separately.
+   */
+  async function attachLanguageBreakdown(repos) {
+    const queue = [...repos];
+
+    async function worker() {
+      while (queue.length > 0) {
+        const repo = queue.shift();
+        repo.languages = await fetchRepoLanguages(repo.full_name);
+      }
+    }
+
+    await Promise.all(
+      Array.from({ length: LANGUAGE_FETCH_CONCURRENCY }, worker)
+    );
 
     return repos;
   }
@@ -91,7 +102,9 @@ window.Portfolio = window.Portfolio || {};
     const res = await fetchWithRetry(
       `https://api.github.com/users/${username}/repos?per_page=100`
     );
-    return res.json();
+    const repos = await res.json();
+    await attachLanguageBreakdown(repos);
+    return repos;
   }
 
   /**
@@ -111,10 +124,7 @@ window.Portfolio = window.Portfolio || {};
     }
 
     try {
-      let repos = await fetchStaticRepos();
-      if (!repos) {
-        repos = await fetchLiveRepos(username);
-      }
+      const repos = await fetchLiveRepos(username);
 
       state.cachedRepos = repos;
       writeCache(cacheKey, repos);
@@ -319,8 +329,8 @@ window.Portfolio = window.Portfolio || {};
   }
 
   /**
-   * Build the multi-color language bar (falls back to nothing if no
-   * per-repo breakdown is available, e.g. on the live-API fallback path)
+   * Build the multi-color language bar (empty if the /languages call for
+   * this repo failed — the card just falls back to the single lang-dot).
    */
   function buildLangBar(repo) {
     const languages = repo.languages;

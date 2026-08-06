@@ -1,15 +1,13 @@
 /**
- * Tech Stack Section — language usage across all repos, shown as percentages.
- * Reads the pre-generated data/languages.json snapshot first (no per-repo
- * API calls, no rate limit); falls back to live per-repo /languages calls
- * only if that snapshot isn't available.
+ * Tech Stack Section — language usage across all repos, shown as
+ * percentages. Doesn't fetch anything itself: it waits for
+ * window.Portfolio.cachedRepos (populated by github.js, which already
+ * fetches each repo's /languages breakdown for the multi-color repo-card
+ * bars) and aggregates those same numbers, instead of hitting the API a
+ * second time.
  */
 
 (function () {
-  const CACHE_KEY = "github_techstack";
-  const CACHE_EXPIRY = 30 * 60 * 1000;
-  const STATIC_LANGUAGES_URL = "data/languages.json";
-
   function langMeta(lang) {
     return (window.LANG_META && window.LANG_META[lang]) || window.DEFAULT_LANG_META;
   }
@@ -32,32 +30,12 @@
       .join("");
   }
 
-  // ─── Fetch ─────────────────────────────────────────────────────────────────
-
-  async function fetchStaticLanguages() {
-    const res = await fetch(STATIC_LANGUAGES_URL, { cache: "no-store" });
-    if (!res.ok) return null;
-    const data = await res.json();
-    return data && typeof data === "object" && Object.keys(data).length ? data : null;
-  }
-
-  async function fetchRepoLanguages(repoFullName) {
-    try {
-      const res = await fetch(
-        `https://api.github.com/repos/${repoFullName}/languages`,
-      );
-      if (!res.ok) return {};
-      return await res.json();
-    } catch {
-      return {};
-    }
-  }
+  // ─── Aggregate ─────────────────────────────────────────────────────────────
 
   /**
-   * Waits for window.Portfolio.cachedRepos (populated by github.js) —
-   * only needed on the live-API fallback path.
+   * Waits for window.Portfolio.cachedRepos to be populated by github.js.
    */
-  function waitForCachedRepos(maxWait = 10000) {
+  function waitForCachedRepos(maxWait = 15000) {
     return new Promise((resolve) => {
       const start = Date.now();
 
@@ -78,66 +56,14 @@
     });
   }
 
-  async function fetchAllLanguagesLive(username) {
-    const repos = await waitForCachedRepos();
-    let repoList = repos;
-
-    if (repoList.length === 0) {
-      try {
-        const res = await fetch(
-          `https://api.github.com/users/${username}/repos?per_page=100`,
-        );
-        if (!res.ok) return {};
-        const data = await res.json();
-        if (!Array.isArray(data)) return {};
-        repoList = data;
-      } catch {
-        return {};
-      }
-    }
-
-    const CONCURRENCY = 5;
+  function aggregateLanguages(repos) {
     const totalLangs = {};
-    const queue = repoList.map((r) => r.full_name).filter(Boolean);
-
-    while (queue.length > 0) {
-      const batch = queue.splice(0, CONCURRENCY);
-      const results = await Promise.all(
-        batch.map((name) => fetchRepoLanguages(name)),
-      );
-      results.forEach((langs) => {
-        Object.entries(langs).forEach(([lang, bytes]) => {
-          totalLangs[lang] = (totalLangs[lang] || 0) + bytes;
-        });
+    repos.forEach((repo) => {
+      if (!repo.languages) return;
+      Object.entries(repo.languages).forEach(([lang, bytes]) => {
+        totalLangs[lang] = (totalLangs[lang] || 0) + bytes;
       });
-    }
-
-    return totalLangs;
-  }
-
-  async function fetchAllLanguages(username) {
-    const cached = localStorage.getItem(CACHE_KEY);
-    if (cached) {
-      try {
-        const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_EXPIRY) {
-          return data;
-        }
-      } catch {
-        localStorage.removeItem(CACHE_KEY);
-      }
-    }
-
-    let totalLangs = await fetchStaticLanguages();
-    if (!totalLangs) {
-      totalLangs = await fetchAllLanguagesLive(username);
-    }
-
-    localStorage.setItem(
-      CACHE_KEY,
-      JSON.stringify({ data: totalLangs, timestamp: Date.now() }),
-    );
-
+    });
     return totalLangs;
   }
 
@@ -225,8 +151,8 @@
   async function init() {
     renderTechSkeletons();
     initFilterInteraction();
-    const langData = await fetchAllLanguages(window.SITE_CONFIG.githubUsername);
-    renderTechStack(langData);
+    const repos = await waitForCachedRepos();
+    renderTechStack(aggregateLanguages(repos));
   }
 
   if (document.readyState === "loading") {

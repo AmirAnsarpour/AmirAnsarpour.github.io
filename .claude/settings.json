@@ -32,7 +32,26 @@
       "Bash(curl -s -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:8934/index.html)",
       "Bash(node shot.js)",
       "Bash(node --check /Users/amir/Main/github/AmirAnsarpour.github.io/js/tilt.js)",
-      "Bash(node --check /Users/amir/Main/github/AmirAnsarpour.github.io/js/github.js)"
+      "Bash(node --check /Users/amir/Main/github/AmirAnsarpour.github.io/js/github.js)",
+      "Bash(gh auth *)",
+      "Bash(gh api *)",
+      "Bash(curl -sS --max-time 10 -o /dev/null -w \"%{http_code}\\\\n\" https://api.github.com)",
+      "Bash(curl -sS --max-time 10 https://api.github.com/repos/AmirAnsarpour/AmirAnsarpour.github.io)",
+      "Bash(curl -sS --max-time 8 -o /dev/null -w \"%{http_code}\\\\n\" https://api.github.com/users/AmirAnsarpour)",
+      "Bash(curl -sS --max-time 8 -o /dev/null -w \"%{http_code}\\\\n\" https://amiransarpour.ir)",
+      "Bash(curl -sS --max-time 8 -o /dev/null -w \"%{http_code}\\\\n\" https://amiransarpour.github.io)",
+      "Bash(nslookup amiransarpour.ir)",
+      "Bash(host amiransarpour.ir)",
+      "Bash(dig amiransarpour.ir)",
+      "Bash(curl -sS -L --max-time 10 -o /dev/null -w \"final_url=%{url_effective} status=%{http_code}\\\\n\" https://amiransarpour.github.io)",
+      "Bash(curl -sSI --max-time 10 https://amiransarpour.github.io)",
+      "Bash(echo \"---exit code: $?---\")",
+      "Bash(git -C /Users/amir/Main/github/AmirAnsarpour.github.io ls-files)",
+      "Bash(xargs du -h)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "Bash(echo \"exit: $?\")"
     ]
   }
 }
