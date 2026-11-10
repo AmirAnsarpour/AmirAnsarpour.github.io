@@ -7,6 +7,8 @@
   const previous = document.querySelector('#previous-page');
   const nextPage = document.querySelector('#next-page');
   const pageStatus = document.querySelector('#page-status');
+  const stackList = document.querySelector('#stack-list');
+  const stackNote = document.querySelector('#stack-note');
   const limit = 5;
   let repos = [];
   let page = 0;
@@ -52,12 +54,59 @@
       list.append(row);
     }
   }
+  function renderStack() {
+    const totals = {};
+    let available = 0;
+    repos.forEach(repo => {
+      if (!repo.languages) return;
+      available++;
+      Object.entries(repo.languages).forEach(([language, bytes]) => {
+        if (Number.isFinite(bytes) && bytes > 0) totals[language] = (totals[language] || 0) + bytes;
+      });
+    });
+    const entries = Object.entries(totals).sort((a, b) => b[1] - a[1]);
+    const total = entries.reduce((sum, entry) => sum + entry[1], 0);
+    stackList.replaceChildren();
+    if (!total) {
+      stackNote.textContent = 'Language breakdown is unavailable right now.';
+      return;
+    }
+    stackNote.textContent = available < repos.length
+      ? `Share of code by size, based on ${available} of ${repos.length} repositories with available language data.`
+      : 'Share of code by size across public repositories. Select a language to explore projects.';
+    entries.forEach(([language, bytes]) => {
+      const percent = (bytes / total * 100).toFixed(1);
+      const button = element('button', 'stack-item', '');
+      button.type = 'button';
+      button.setAttribute('aria-pressed', String(filter.value === language));
+      const name = element('span', 'stack-name', language);
+      const value = element('span', 'stack-value', `${percent}%`);
+      const track = element('span', 'stack-track', '');
+      track.setAttribute('aria-hidden', 'true');
+      const fill = element('span', 'stack-fill', '');
+      fill.style.width = `${percent}%`;
+      track.append(fill);
+      button.append(name, value, track);
+      button.addEventListener('click', () => {
+        filter.value = filter.value === language ? '' : language;
+        page = 0;
+        syncMenu(filter);
+        render();
+        renderStack();
+        document.querySelector('#work').scrollIntoView({ behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+      });
+      stackList.append(button);
+    });
+  }
   function updateData(data) {
     repos = data;
+    const selectedLanguage = filter.value;
     const langs = [...new Set(repos.flatMap(languages))].sort((a,b) => a.localeCompare(b));
     filter.replaceChildren(new Option('All languages', ''));
     langs.forEach(lang => filter.add(new Option(lang, lang)));
+    if (langs.includes(selectedLanguage)) filter.value = selectedLanguage;
     syncMenu(filter);
+    renderStack();
     document.querySelector('#stat-repos').textContent = repos.length;
     document.querySelector('#stat-stars').textContent = repos.reduce((sum, repo) => sum + repo.stargazers_count, 0).toLocaleString();
     document.querySelector('#stat-forks').textContent = repos.reduce((sum, repo) => sum + repo.forks_count, 0).toLocaleString();
@@ -94,11 +143,12 @@
       updateData(all);
       filter.value = currentFilter;
       syncMenu(filter);
+      renderStack();
       render();
       try { localStorage.setItem(key, JSON.stringify({data: all, timestamp: Date.now()})); } catch (_) { /* optional cache */ }
     } catch (_) {
       if (Array.isArray(cached?.data)) { updateData(cached.data); count.textContent += ' / cached'; }
-      else { count.textContent = 'Project index unavailable'; list.replaceChildren(element('p', 'list-message', 'Projects could not be loaded. Please visit GitHub using the link below.')); }
+      else { stackNote.textContent = 'Language breakdown is unavailable right now.'; count.textContent = 'Project index unavailable'; list.replaceChildren(element('p', 'list-message', 'Projects could not be loaded. Please visit GitHub using the link below.')); }
     }
   }
   // Keep the native selects as a fallback, and enhance them with a consistent menu.
@@ -157,7 +207,7 @@
     void list.offsetWidth;
     list.classList.add('page-enter');
   }
-  filter.addEventListener('change', () => { page = 0; render(); });
+  filter.addEventListener('change', () => { page = 0; render(); renderStack(); });
   sort.addEventListener('change', () => { page = 0; render(); });
   previous.addEventListener('click', () => changePage(-1));
   nextPage.addEventListener('click', () => changePage(1));
