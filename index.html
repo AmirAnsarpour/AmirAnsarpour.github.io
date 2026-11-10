@@ -1,411 +1,64 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Amir Ansarpour | Developer</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="color-scheme" content="light" />
+  <meta name="description" content="Amir Ansarpour | personal projects and open source." />
+  <meta name="author" content="Amir Ansarpour" />
+  <meta property="og:title" content="Amir Ansarpour | Developer" />
+  <meta property="og:description" content="An index of digital work and open-source projects." />
+  <meta property="og:image" content="https://ansarpour.org/img/me.png" />
+  <meta property="og:url" content="https://ansarpour.org" />
+  <meta property="og:type" content="website" />
+  <title>Amir Ansarpour | Developer</title>
+  <link rel="icon" type="image/png" href="img/fire.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <script src="js/portfolio.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#work">Skip to projects</a>
+  <header class="topbar" id="top">
+    <a class="identity" href="#top"><strong>Amir Ansarpour</strong><span>Independent developer</span></a>
+    <nav aria-label="Main navigation"><a href="#work">Work</a><a href="#about">About</a><a href="#contact">Contact</a></nav>
+    <a class="top-index" href="https://github.com/AmirAnsarpour" target="_blank" rel="noopener noreferrer">GitHub</a>
+  </header>
 
-    <!-- Apply the stored/system theme before first paint, to avoid a flash -->
-    <script>
-      (function () {
-        try {
-          var stored = localStorage.getItem("theme");
-          var theme =
-            stored ||
-            (window.matchMedia("(prefers-color-scheme: light)").matches
-              ? "light"
-              : "dark");
-          document.documentElement.setAttribute("data-theme", theme);
-        } catch (e) {
-          document.documentElement.setAttribute("data-theme", "dark");
-        }
-      })();
-    </script>
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-top"><span>Portfolio / Index</span><span>Developer & creator</span><span>Selected work & ongoing experiments</span></div>
+      <div class="hero-title-wrap"><p class="hero-prefix">A personal collection of digital work.</p><h1 id="hero-title">AMIR<br />ANSARPOUR<span class="period">.</span></h1></div>
+      <div class="hero-bottom"><p>Making digital stuff.<br />They work. Usually.</p><a href="#work">Explore the work</a><span>Scroll to discover</span></div>
+    </section>
 
-    <!-- SEO & Open Graph -->
-    <meta
-      name="description"
-      content="Amir Ansarpour - Developer & Creator. Open source projects and portfolio."
-    />
-    <meta
-      name="keywords"
-      content="developer, programmer, open source, portfolio, Amir Ansarpour"
-    />
-    <meta name="author" content="Amir Ansarpour" />
-    <meta property="og:title" content="Amir Ansarpour | Developer" />
-    <meta
-      property="og:description"
-      content="Exploring the digital frontier with high-end aesthetics and smooth experiences."
-    />
-    <meta property="og:image" content="img/me.png" />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://ansarpour.org" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Amir Ansarpour | Developer" />
-    <meta
-      name="twitter:description"
-      content="Exploring the digital frontier with high-end aesthetics and smooth experiences."
-    />
-    <meta name="twitter:image" content="img/me.png" />
+    <section class="stats-section" aria-label="GitHub overview">
+      <div class="stats-label">The numbers <span>GitHub / At a glance</span></div>
+      <div class="stats" aria-label="GitHub repository statistics"><div><span id="stat-repos">…</span><p>Repositories</p></div><div><span id="stat-stars">…</span><p>Stars</p></div><div><span id="stat-forks">…</span><p>Forks</p></div><div><span id="stat-languages">…</span><p>Languages</p></div></div>
+    </section>
 
-    <!-- Preconnect -->
-    <link rel="preconnect" href="https://api.github.com" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" />
-
-    <link rel="icon" type="image/png" href="img/fire.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-    />
-    <link rel="stylesheet" href="css/style.css" />
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            colors: { iosBg: "#050505" },
-          },
-        },
-      };
-    </script>
-  </head>
-  <body class="bg-iosBg text-white selection:bg-blue-500 selection:text-white">
-    <noscript>
-      <div style="background:#111;color:#d1d5db;text-align:center;padding:14px 16px;font-size:13px;">
-        JavaScript is disabled, so live GitHub stats, tech stack and
-        repositories can't load here. Visit
-        <a href="https://github.com/AmirAnsarpour" style="color:#60a5fa;">github.com/AmirAnsarpour</a>
-        directly instead.
+    <section class="work section" id="work" aria-labelledby="work-title">
+      <div class="section-heading"><div><span class="eyebrow">01 / The index</span><h2 id="work-title">Open source<span class="period">.</span></h2></div><p>A living collection of projects,<br />ideas, and experiments.</p></div>
+      <div class="work-controls">
+        <p id="project-count">Fetching projects from GitHub</p>
+        <div class="controls"><div class="select-control"><span>Language</span><select id="language-filter" aria-label="Language"><option value="">All languages</option></select></div><div class="select-control"><span>Sort by</span><select id="sort-projects" aria-label="Sort by"><option value="stars">Most stars</option><option value="updated">Recently updated</option><option value="forks">Most forks</option><option value="name">Name A–Z</option></select></div></div>
       </div>
-    </noscript>
-    <!-- Scroll Progress -->
-    <div id="scroll-progress" aria-hidden="true"></div>
+      <div class="index-head" aria-hidden="true"><span>Updated</span><span>Project</span><span>Language</span><span>Stars</span></div>
+      <div id="project-list" class="project-list" aria-live="polite"><p class="list-message">Loading the index…</p></div>
+      <div class="index-footer"><nav class="pagination" aria-label="Project pages"><button id="previous-page" type="button" aria-label="Previous page" disabled>Previous</button><span id="page-status" aria-live="polite">01 / 01</span><button id="next-page" type="button" aria-label="Next page" disabled>Next</button></nav><a href="https://github.com/AmirAnsarpour?tab=repositories" target="_blank" rel="noopener noreferrer">View on GitHub</a></div>
+      <noscript><p>JavaScript is needed to load the project index. <a href="https://github.com/AmirAnsarpour?tab=repositories">Browse projects on GitHub.</a></p></noscript>
+    </section>
 
-    <!-- Cursor Glow -->
-    <div id="cursor-glow" aria-hidden="true"></div>
+    <section class="about section" id="about" aria-labelledby="about-title">
+      <div class="section-heading"><div><span class="eyebrow">02 / A little context</span><h2 id="about-title">About<span class="period">.</span></h2></div><p>Behind the work</p></div>
+      <div class="about-grid"><p class="about-statement">Making things.<br />Having fun.</p><div class="about-copy"><p>I'm <strong>Amir Ansarpour</strong>. I like tinkering with code and making things for fun. Some ideas work out, and some don't. That's part of it.</p><p>This is a collection of the projects I've played around with and decided to share.</p></div></div>
+    </section>
 
-    <!-- Back to Top -->
-    <button
-      id="back-to-top"
-      type="button"
-      class="back-to-top-btn"
-      aria-label="Back to top"
-    >
-      <i class="fa-solid fa-arrow-up" aria-hidden="true"></i>
-    </button>
-
-    <!-- Ambient Background Glows -->
-    <div
-      class="fixed inset-0 overflow-hidden pointer-events-none"
-      aria-hidden="true"
-    >
-      <div
-        class="absolute -top-[10%] -left-[10%] w-[40%] h-[40%] bg-blue-600/10 blur-[120px] rounded-full"
-      ></div>
-      <div
-        class="absolute top-[40%] -right-[10%] w-[30%] h-[30%] bg-purple-600/10 blur-[120px] rounded-full"
-      ></div>
-    </div>
-
-    <!-- Particle Canvas Container -->
-    <div
-      id="particle-container"
-      class="fixed inset-0 pointer-events-none z-[1]"
-      aria-hidden="true"
-    ></div>
-
-    <div class="relative z-10 max-w-6xl mx-auto px-6 py-10">
-      <!-- Navigation -->
-      <nav
-        class="sticky top-4 md:top-6 z-50 flex justify-center mb-10 md:mb-16 px-4"
-        aria-label="Main navigation"
-      >
-        <div
-          class="glass-nav px-3 md:px-4 py-2 flex items-center gap-1 md:gap-2 border border-white/10"
-        >
-          <a href="#" class="nav-brand" aria-label="Home">Amir Ansarpour</a>
-          <div class="h-4 w-[1px] bg-white/20 hidden md:block" aria-hidden="true"></div>
-          <a href="#tech-stack" class="nav-link">Stack</a>
-          <a href="#repositories" class="nav-link">Projects</a>
-          <div class="h-4 w-[1px] bg-white/20 hidden md:block" aria-hidden="true"></div>
-          <button
-            id="theme-toggle"
-            type="button"
-            class="theme-toggle-btn"
-            aria-label="Toggle color theme"
-          ></button>
-        </div>
-      </nav>
-
-      <!-- Hero Section -->
-      <header
-        class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12 md:mb-20 md:auto-rows-fr"
-      >
-        <div
-          class="md:col-span-2 glass-card p-8 md:p-12 flex flex-col justify-center"
-        >
-          <h1
-            class="text-5xl md:text-7xl font-extrabold tracking-tighter mb-4 leading-[1.1]"
-          >
-            <!-- Typing Animation Target -->
-            <span id="typing-text"></span
-            ><span id="typing-cursor" class="typing-cursor">|</span>
-          </h1>
-          <p class="text-lg md:text-xl text-gray-400 max-w-md mb-8">
-            Making digital stuff. They work. Usually.
-          </p>
-          <div class="flex gap-4">
-            <a
-              href="https://github.com/AmirAnsarpour"
-              class="social-btn"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="GitHub Profile"
-              ><i class="fab fa-github text-xl" aria-hidden="true"></i
-            ></a>
-            <a
-              href="https://t.me/AmirAnsarpour"
-              class="social-btn"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Telegram"
-              ><i class="fab fa-telegram text-xl" aria-hidden="true"></i
-            ></a>
-            <a
-              href="https://instagram.com/AmirAnsarpour_"
-              class="social-btn"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Instagram"
-              ><i class="fab fa-instagram text-xl" aria-hidden="true"></i
-            ></a>
-            <a
-              href="https://youtube.com/@AmirAnsarpour"
-              class="social-btn"
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="YouTube"
-              ><i class="fab fa-youtube text-xl" aria-hidden="true"></i
-            ></a>
-          </div>
-        </div>
-
-        <div class="glass-card flex items-center justify-center p-8">
-          <div id="profile-tilt" class="relative w-48 h-48 md:w-64 md:h-64 group">
-            <img
-              src="img/me.png"
-              alt="Portrait of Amir Ansarpour, Developer and Creator"
-              class="rounded-full w-full h-full object-cover border-4 border-white/20 shadow-2xl group-hover:border-white/40"
-              loading="eager"
-              width="256"
-              height="256"
-            />
-            <div
-              class="absolute inset-0 rounded-full bg-blue-500/10 blur-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-              aria-hidden="true"
-            ></div>
-          </div>
-        </div>
-      </header>
-
-      <!-- Stats Counter Section -->
-      <section id="stats" class="mb-12 md:mb-20" aria-label="GitHub Statistics">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-          <div
-            class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
-          >
-            <div
-              class="text-3xl md:text-5xl font-extrabold tracking-tighter mb-2"
-            >
-              <span class="counter" data-target="0" id="stat-repos">0</span>
-            </div>
-            <span
-              class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-[0.2em]"
-              >Repositories</span
-            >
-          </div>
-          <div
-            class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
-          >
-            <div
-              class="text-3xl md:text-5xl font-extrabold tracking-tighter mb-2"
-            >
-              <span class="counter" data-target="0" id="stat-stars">0</span>
-            </div>
-            <span
-              class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-[0.2em]"
-              >Total Stars</span
-            >
-          </div>
-          <div
-            class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
-          >
-            <div
-              class="text-3xl md:text-5xl font-extrabold tracking-tighter mb-2"
-            >
-              <span class="counter" data-target="0" id="stat-forks">0</span>
-            </div>
-            <span
-              class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-[0.2em]"
-              >Total Forks</span
-            >
-          </div>
-          <div
-            class="glass-card flex flex-col items-center justify-center py-8 px-4 text-center stats-item"
-          >
-            <div
-              class="text-3xl md:text-5xl font-extrabold tracking-tighter mb-2"
-            >
-              <span class="counter" data-target="0" id="stat-langs">0</span>
-            </div>
-            <span
-              class="text-[10px] md:text-xs text-gray-500 font-bold uppercase tracking-[0.2em]"
-              >Languages</span
-            >
-          </div>
-        </div>
-      </section>
-
-      <!-- Tech Stack Section -->
-      <section id="tech-stack" class="mb-12 md:mb-20" aria-label="Tech Stack">
-        <div
-          class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 px-4 gap-4"
-        >
-          <h2 class="text-3xl font-bold tracking-tight">Tech Stack</h2>
-          <span
-            class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]"
-            >Tools I Work With</span
-          >
-        </div>
-        <div
-          class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4"
-          id="tech-grid"
-        >
-          <!-- JS injects tech cards -->
-        </div>
-      </section>
-
-      <!-- Repositories -->
-      <section id="repositories" aria-label="Open Source Projects">
-        <div
-          class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 px-4 gap-4"
-        >
-          <div class="flex items-center gap-3 flex-wrap">
-            <h2 class="text-3xl font-bold tracking-tight">Open Source</h2>
-            <button
-              type="button"
-              id="clear-filter-btn"
-              class="glass-dropdown-btn filter-chip px-3 py-1.5 text-[11px]"
-            >
-              <i class="fa-solid fa-filter text-[10px]" aria-hidden="true"></i>
-              <span id="active-filter-label"></span>
-              <i class="fa-solid fa-xmark" aria-hidden="true"></i>
-            </button>
-          </div>
-
-          <!-- Custom Glass Dropdown -->
-          <div class="relative inline-block text-left" id="sort-dropdown">
-            <div class="flex items-center gap-3">
-              <span
-                class="text-gray-500 text-[10px] font-bold uppercase tracking-[0.2em]"
-                >Sort By</span
-              >
-              <button
-                type="button"
-                id="sort-button"
-                class="glass-dropdown-btn"
-                aria-haspopup="true"
-                aria-expanded="false"
-                aria-controls="sort-menu"
-              >
-                <span id="current-sort">Most Stars</span>
-                <i
-                  class="fa-solid fa-chevron-down text-[10px] transition-transform duration-300"
-                  aria-hidden="true"
-                ></i>
-              </button>
-            </div>
-
-            <div
-              id="sort-menu"
-              class="glass-dropdown-menu hidden"
-              role="menu"
-              aria-label="Sort options"
-            >
-              <div class="py-2 px-1">
-                <button
-                  class="sort-option active"
-                  data-value="stars"
-                  role="menuitem"
-                >
-                  Most Stars
-                </button>
-                <button class="sort-option" data-value="forks" role="menuitem">
-                  Most Forks
-                </button>
-                <button
-                  class="sort-option"
-                  data-value="updated"
-                  role="menuitem"
-                >
-                  Recently Updated
-                </button>
-                <button class="sort-option" data-value="name" role="menuitem">
-                  Name (A-Z)
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div
-          id="repositories-grid"
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
-          aria-live="polite"
-        >
-          <!-- JS will inject cards here -->
-        </div>
-
-        <!-- View All Button -->
-        <div
-          class="text-center mt-10"
-          id="view-all-container"
-          style="display: none"
-        >
-          <button
-            id="view-all-btn"
-            class="glass-dropdown-btn px-6 py-3 text-sm"
-          >
-            View All Projects
-            <i class="fa-solid fa-arrow-right ml-2" aria-hidden="true"></i>
-          </button>
-        </div>
-      </section>
-
-      <footer
-        class="mt-20 md:mt-32 pb-10 text-center text-gray-600 text-xs font-bold tracking-[0.2em] uppercase"
-      >
-        &copy;
-        <script>
-          document.write(new Date().getFullYear());
-        </script>
-        Amir Ansarpour &bull;
-      </footer>
-    </div>
-
-    <script src="js/config.js"></script>
-    <script src="js/lang-meta.js"></script>
-    <script src="js/theme.js"></script>
-    <script src="js/particles.js"></script>
-    <script src="js/github.js"></script>
-    <script src="js/dropdown.js"></script>
-    <script src="js/cursor.js"></script>
-    <script src="js/typing.js"></script>
-    <script src="js/tilt.js"></script>
-    <script src="js/stats.js"></script>
-    <script src="js/techstack.js"></script>
-    <script src="js/main.js"></script>
-  </body>
+    <section class="contact section" id="contact" aria-labelledby="contact-title"><div class="contact-intro"><span class="eyebrow">03 / Elsewhere</span><p>Good things start<br />with a conversation.</p></div><h2 id="contact-title">SAY HELLO<span class="period">.</span></h2><div class="contact-links"><a href="https://github.com/AmirAnsarpour" target="_blank" rel="noopener noreferrer">GitHub</a><a href="https://t.me/AmirAnsarpour" target="_blank" rel="noopener noreferrer">Telegram</a><a href="https://instagram.com/AmirAnsarpour_" target="_blank" rel="noopener noreferrer">Instagram</a><a href="https://youtube.com/@AmirAnsarpour" target="_blank" rel="noopener noreferrer">YouTube</a></div></section>
+  </main>
+  <footer><span>© <span id="year">2026</span> <strong>Amir Ansarpour</strong></span><a href="#top">Back to top</a></footer>
+</body>
 </html>
