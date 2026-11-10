@@ -3,6 +3,7 @@
   const list = document.querySelector('#project-list');
   const filter = document.querySelector('#language-filter');
   const sort = document.querySelector('#sort-projects');
+  const search = document.querySelector('#project-search');
   const count = document.querySelector('#project-count');
   const previous = document.querySelector('#previous-page');
   const nextPage = document.querySelector('#next-page');
@@ -21,11 +22,13 @@
     return node;
   }
   function languages(repo) {
-    return repo.languages ? Object.keys(repo.languages) : repo.language ? [repo.language] : [];
+    const names = repo.languages ? Object.keys(repo.languages) : [];
+    return names.length ? names : repo.language ? [repo.language] : [];
   }
   function render() {
     const selected = filter.value;
-    const items = repos.filter(repo => !selected || languages(repo).includes(selected));
+    const query = search.value.trim().toLocaleLowerCase();
+    const items = repos.filter(repo => (!selected || languages(repo).includes(selected)) && (!query || `${repo.name} ${repo.description || ''}`.toLocaleLowerCase().includes(query)));
     items.sort((a, b) => {
       if (sort.value === 'name') return a.name.localeCompare(b.name);
       if (sort.value === 'updated') return new Date(b.pushed_at || b.updated_at) - new Date(a.pushed_at || a.updated_at);
@@ -43,8 +46,7 @@
     for (const repo of items.slice(page * limit, (page + 1) * limit)) {
       const row = element('a', 'project-row', '');
       row.href = repo.html_url;
-      row.target = '_blank';
-      row.rel = 'noopener noreferrer';
+      row.addEventListener('click', event => { event.preventDefault(); openProject(repo); });
       const date = new Date(repo.pushed_at || repo.updated_at);
       row.append(element('span', 'date', Number.isNaN(date.getTime()) ? 'N/A' : date.toLocaleDateString('en-US', {month:'short', year:'numeric'})));
       const title = element('span', 'project-title', '');
@@ -68,7 +70,15 @@
     const total = entries.reduce((sum, entry) => sum + entry[1], 0);
     stackList.replaceChildren();
     if (!total) {
-      stackNote.textContent = 'Language breakdown is unavailable right now.';
+      const primary = [...new Set(repos.map(repo => repo.language).filter(Boolean))].sort();
+      stackNote.textContent = primary.length ? 'Byte-level breakdown is unavailable. Showing primary languages instead.' : 'Language data is unavailable right now.';
+      primary.forEach(language => {
+        const button = element('button', 'stack-item stack-fallback', language);
+        button.type = 'button';
+        button.setAttribute('aria-pressed', String(filter.value === language));
+        button.addEventListener('click', () => { filter.value = filter.value === language ? '' : language; page = 0; syncMenu(filter); render(); renderStack(); document.querySelector('#work').scrollIntoView({behavior:'smooth'}); });
+        stackList.append(button);
+      });
       return;
     }
     stackNote.textContent = available < repos.length
@@ -117,7 +127,8 @@
     const key = `github_repos_${username}`;
     let cached;
     try { cached = JSON.parse(localStorage.getItem(key)); } catch (_) { /* storage may be unavailable */ }
-    if (Array.isArray(cached?.data) && Date.now() - cached.timestamp < 1800000) { updateData(cached.data); return; }
+    if (Array.isArray(cached?.data) && Date.now() - cached.timestamp < 1800000 && cached.data.every(repo => repo.languages)) { updateData(cached.data); return; }
+    if (Array.isArray(cached?.data)) updateData(cached.data);
     try {
       const all = [];
       for (let page = 1; ; page++) {
@@ -148,9 +159,223 @@
       try { localStorage.setItem(key, JSON.stringify({data: all, timestamp: Date.now()})); } catch (_) { /* optional cache */ }
     } catch (_) {
       if (Array.isArray(cached?.data)) { updateData(cached.data); count.textContent += ' / cached'; }
-      else { stackNote.textContent = 'Language breakdown is unavailable right now.'; count.textContent = 'Project index unavailable'; list.replaceChildren(element('p', 'list-message', 'Projects could not be loaded. Please visit GitHub using the link below.')); }
+      else { stackNote.textContent = 'Language data is unavailable right now.'; count.textContent = 'Project index unavailable'; list.replaceChildren(element('p', 'list-message', 'Projects could not be loaded. Please visit GitHub using the link below.')); }
     }
   }
+  const dialog = document.querySelector('#project-dialog');
+  const detailTitle = document.querySelector('#detail-title');
+  const detailDescription = document.querySelector('#detail-description');
+  const detailLanguages = document.querySelector('#detail-languages');
+  const detailLinks = document.querySelector('#detail-links');
+  const readme = document.querySelector('#detail-readme');
+  let detailRequest = 0;
+
+  function safeUrl(value, base) {
+    try {
+      if (!value || !value.trim()) return null;
+      const url = new URL(value, base);
+      return url.protocol === 'https:' || url.protocol === 'http:' ? url.href : null;
+    } catch (_) { return null; }
+  }
+  function addExternalLink(parent, label, url) {
+    const safe = safeUrl(url);
+    if (!safe) return;
+    const link = element('a', '', label);
+    link.href = safe;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    parent.append(link);
+  }
+  function renderReadme(html, repo) {
+    const source = new DOMParser().parseFromString(html, 'text/html');
+    const allowed = new Set(['ARTICLE','DIV','SECTION','P','H1','H2','H3','H4','H5','H6','UL','OL','LI','A','IMG','STRONG','EM','B','I','DEL','S','CODE','PRE','BLOCKQUOTE','HR','BR','TABLE','THEAD','TBODY','TR','TH','TD','DETAILS','SUMMARY','SUP','SUB']);
+    const ignored = new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','SVG','FORM','INPUT','BUTTON','VIDEO','AUDIO']);
+    const base = `${repo.html_url}/blob/${encodeURIComponent(repo.default_branch || 'main')}/`;
+    function copy(node, parent) {
+      if (node.nodeType === Node.TEXT_NODE) { parent.append(document.createTextNode(node.textContent)); return; }
+      if (node.nodeType !== Node.ELEMENT_NODE || ignored.has(node.tagName)) return;
+      if (!allowed.has(node.tagName)) { node.childNodes.forEach(child => copy(child, parent)); return; }
+      const target = document.createElement(node.tagName.toLowerCase());
+      if (node.tagName === 'A') {
+        const href = safeUrl(node.getAttribute('href'), base);
+        if (href) { target.href = href; target.target = '_blank'; target.rel = 'noopener noreferrer'; }
+      }
+      if (node.tagName === 'IMG') {
+        let src = safeUrl(node.getAttribute('src'), base);
+        if (!src) return;
+        const imageUrl = new URL(src);
+        if (imageUrl.hostname === 'github.com' && imageUrl.pathname.includes('/blob/')) {
+          imageUrl.hostname = 'raw.githubusercontent.com';
+          imageUrl.pathname = imageUrl.pathname.replace('/blob/', '/');
+          src = imageUrl.href;
+        }
+        target.src = src; target.alt = node.getAttribute('alt') || ''; target.loading = 'lazy';
+      }
+      node.childNodes.forEach(child => copy(child, target));
+      parent.append(target);
+    }
+    const fragment = document.createDocumentFragment();
+    (source.querySelector('article') || source.body).childNodes.forEach(node => copy(node, fragment));
+    readme.replaceChildren(fragment);
+  }
+  async function openProject(repo) {
+    const request = ++detailRequest;
+    detailTitle.textContent = repo.name;
+    detailDescription.textContent = repo.description || 'No description provided.';
+    detailLanguages.textContent = `Languages: ${languages(repo).join(', ') || 'Not available'}`;
+    detailLinks.replaceChildren();
+    addExternalLink(detailLinks, 'View on GitHub', repo.html_url);
+    if (repo.homepage && repo.homepage.trim()) addExternalLink(detailLinks, 'Visit project website', repo.homepage.trim());
+    readme.textContent = 'Loading README…';
+    dialog.showModal();
+    try {
+      const response = await fetch(`https://api.github.com/repos/${repo.full_name}/readme`, {headers: {'Accept': 'application/vnd.github.html+json'}});
+      if (!response.ok) throw new Error('README unavailable');
+      const html = await response.text();
+      if (request !== detailRequest || !dialog.open) return;
+      if (!html.trimStart().startsWith('<')) throw new Error('README format unavailable');
+      renderReadme(html, repo);
+    } catch (_) {
+      if (request === detailRequest && dialog.open) readme.textContent = 'README could not be loaded. You can read it on GitHub.';
+    }
+  }
+  document.querySelector('#detail-close').addEventListener('click', () => dialog.close());
+  dialog.addEventListener('close', () => { detailRequest++; });
+
+  async function loadProfile() {
+    const followers = document.querySelector('#profile-followers');
+    const following = document.querySelector('#profile-following');
+    try {
+      const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
+      if (!response.ok) throw new Error('Profile unavailable');
+      const profile = await response.json();
+      if (!Number.isInteger(profile.followers) || !Number.isInteger(profile.following)) throw new Error('Invalid profile');
+      followers.textContent = profile.followers.toLocaleString();
+      following.textContent = profile.following.toLocaleString();
+    } catch (_) {
+      followers.textContent = 'See';
+      following.textContent = 'See';
+    }
+  }
+  function updateTehranTime() {
+    const clock = document.querySelector('#tehran-time');
+    try {
+      const now = new Date();
+      clock.textContent = new Intl.DateTimeFormat('en-GB', {timeZone:'Asia/Tehran', hour:'2-digit', minute:'2-digit', hourCycle:'h23'}).format(now);
+      clock.dateTime = now.toISOString();
+    } catch (_) {
+      clock.textContent = 'Unavailable';
+    }
+  }
+  loadProfile();
+  updateTehranTime();
+  setInterval(updateTehranTime, 30000);
+  async function loadContributions() {
+    const total = document.querySelector('#contribution-total');
+    const grid = document.querySelector('#contribution-grid');
+    const months = document.querySelector('#contribution-months');
+    const tooltip = document.querySelector('#contribution-tooltip');
+    const tooltipCount = tooltip.querySelector('.tooltip-count');
+    const tooltipDate = tooltip.querySelector('.tooltip-date');
+    let activeCell = null;
+    function showDetail(cell) {
+      activeCell = cell;
+      tooltipCount.textContent = cell.dataset.count;
+      tooltipDate.textContent = cell.dataset.date;
+      tooltip.hidden = false;
+      const rect = cell.getBoundingClientRect();
+      const width = tooltip.offsetWidth;
+      tooltip.style.left = `${Math.max(width / 2 + 12, Math.min(window.innerWidth - width / 2 - 12, rect.left + rect.width / 2))}px`;
+      tooltip.style.top = `${Math.max(tooltip.offsetHeight + 12, rect.top - 10)}px`;
+    }
+    function hideDetail() { tooltip.hidden = true; activeCell = null; }
+    grid.addEventListener('keydown', event => {
+      const step = {ArrowRight:7, ArrowLeft:-7, ArrowDown:1, ArrowUp:-1}[event.key];
+      if (event.key === 'Escape') { hideDetail(); return; }
+      if (step === undefined) return;
+      const cells = Array.from(grid.querySelectorAll('button'));
+      const current = cells.indexOf(document.activeElement);
+      if (current < 0) return;
+      event.preventDefault();
+      const next = cells[Math.max(0, Math.min(cells.length - 1, current + step))];
+      cells[current].tabIndex = -1;
+      next.tabIndex = 0;
+      next.focus();
+    });
+    document.addEventListener('pointerdown', event => { if (activeCell && !grid.contains(event.target)) hideDetail(); });
+    window.addEventListener('scroll', hideDetail, {passive:true});
+    window.addEventListener('resize', hideDetail);
+    try {
+      const response = await fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username)}?y=last`);
+      if (!response.ok) throw new Error('Calendar unavailable');
+      const data = await response.json();
+      const days = data.contributions;
+      if (!Array.isArray(days) || !days.length) throw new Error('No calendar data');
+      const valid = days.filter(day => /^\d{4}-\d{2}-\d{2}$/.test(day.date) && Number.isFinite(day.count) && day.level >= 0 && day.level <= 4).sort((a, b) => a.date.localeCompare(b.date));
+      if (!valid.length) throw new Error('No calendar data');
+      const offset = new Date(`${valid[0].date}T00:00:00Z`).getUTCDay();
+      const weeks = Math.ceil((offset + valid.length) / 7);
+      const sum = valid.reduce((acc, day) => acc + day.count, 0);
+      total.textContent = `${sum.toLocaleString()} contributions in the last year`;
+      grid.setAttribute('aria-label', `${sum.toLocaleString()} contributions in the last year. Use arrow keys to explore days.`);
+      grid.style.setProperty('--weeks', weeks);
+      months.style.setProperty('--weeks', weeks);
+      grid.replaceChildren(); months.replaceChildren();
+      let lastMonth = '';
+      valid.forEach((day, index) => {
+        const position = offset + index;
+        const week = Math.floor(position / 7) + 1;
+        const date = new Date(`${day.date}T00:00:00Z`);
+        const month = day.date.slice(0, 7);
+        if (month !== lastMonth) {
+          const label = element('span', '', date.toLocaleDateString('en-US', {month: 'short', timeZone: 'UTC'}));
+          label.style.gridColumn = week;
+          months.append(label);
+          lastMonth = month;
+        }
+        const cell = element('button', `contribution-day level-${Math.floor(day.level)}`, '');
+        cell.type = 'button';
+        cell.tabIndex = index === valid.length - 1 ? 0 : -1;
+        cell.style.gridColumn = week;
+        cell.style.gridRow = position % 7 + 1;
+        cell.dataset.count = `${day.count} contribution${day.count === 1 ? '' : 's'}`;
+        cell.dataset.date = date.toLocaleDateString('en-US', {month:'long', day:'numeric', year:'numeric', timeZone:'UTC'});
+        cell.setAttribute('aria-label', `${cell.dataset.count} on ${cell.dataset.date}`);
+        cell.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') showDetail(cell); });
+        cell.addEventListener('pointerleave', event => { if (event.pointerType !== 'touch' && document.activeElement !== cell) hideDetail(); });
+        cell.addEventListener('focus', () => showDetail(cell));
+        cell.addEventListener('blur', hideDetail);
+        cell.addEventListener('click', () => showDetail(cell));
+        grid.append(cell);
+      });
+    } catch (_) {
+      total.textContent = 'Contribution calendar is temporarily unavailable.';
+      grid.setAttribute('aria-label', 'Contribution calendar unavailable. View contributions on GitHub.');
+    }
+  }
+  loadContributions();
+  async function loadActivity() {
+    const container = document.querySelector('#activity-list');
+    const labels = { PushEvent: 'Pushed code', CreateEvent: 'Created', DeleteEvent: 'Deleted a branch or tag', WatchEvent: 'Starred', ForkEvent: 'Forked', IssuesEvent: 'Updated an issue in', IssueCommentEvent: 'Commented on an issue in', PullRequestEvent: 'Updated a pull request in', PullRequestReviewEvent: 'Reviewed a pull request in', ReleaseEvent: 'Published a release in', PublicEvent: 'Made public' };
+    try {
+      const response = await fetch(`https://api.github.com/users/${username}/events/public?per_page=30`);
+      if (!response.ok) throw new Error('Activity unavailable');
+      const events = (await response.json()).filter(event => labels[event.type] && event.repo?.name).slice(0, 6);
+      container.replaceChildren();
+      if (!events.length) { container.append(element('p', 'list-message', 'No recent public activity to show.')); return; }
+      events.forEach(event => {
+        const row = element('a', 'activity-row', '');
+        row.href = `https://github.com/${event.repo.name}`;
+        row.target = '_blank'; row.rel = 'noopener noreferrer';
+        const date = new Date(event.created_at);
+        row.append(element('span', 'activity-date', date.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})), element('span', 'activity-action', labels[event.type]), element('span', 'activity-repo', event.repo.name));
+        container.append(row);
+      });
+    } catch (_) {
+      container.replaceChildren(element('p', 'list-message', 'Recent activity could not be loaded. Visit GitHub to see more.'));
+    }
+  }
+  loadActivity();
   // Keep the native selects as a fallback, and enhance them with a consistent menu.
   function enhanceSelect(select) {
     const details = document.createElement('details');
@@ -207,6 +432,7 @@
     void list.offsetWidth;
     list.classList.add('page-enter');
   }
+  search.addEventListener('input', () => { page = 0; render(); });
   filter.addEventListener('change', () => { page = 0; render(); renderStack(); });
   sort.addEventListener('change', () => { page = 0; render(); });
   previous.addEventListener('click', () => changePage(-1));

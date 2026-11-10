@@ -1,33 +1,30 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>404 — Page Not Found | Amir Ansarpour</title>
-    <meta name="robots" content="noindex" />
-    <link rel="icon" type="image/png" href="img/fire.png" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="css/style.css" />
-    <script>
-      tailwind.config = { theme: { extend: { colors: { iosBg: "#050505" } } } };
-    </script>
-  </head>
-  <body class="bg-iosBg text-white min-h-screen flex items-center justify-center px-6">
-    <div class="glass-card p-10 md:p-16 text-center max-w-md">
-      <p class="text-sm font-bold uppercase tracking-[0.3em] text-blue-400 mb-4">
-        404
-      </p>
-      <h1 class="text-3xl md:text-4xl font-extrabold tracking-tight mb-4">
-        Page not found
-      </h1>
-      <p class="text-gray-400 mb-8">
-        This page doesn't exist, or moved somewhere else.
-      </p>
-      <a
-        href="/"
-        class="glass-dropdown-btn px-6 py-3 text-sm inline-flex items-center"
-        >Back to home</a
-      >
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#ffffff" />
+  <meta name="color-scheme" content="light" />
+  <meta name="robots" content="noindex" />
+  <title>Page not found | Amir Ansarpour</title>
+  <link rel="icon" type="image/png" href="/img/fire.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="/css/style.css" />
+</head>
+<body class="error-page">
+  <header class="topbar error-topbar">
+    <a class="identity" href="/"><strong>Amir Ansarpour</strong><span>Independent developer</span></a>
+    <a class="error-home" href="/">Home</a>
+  </header>
+  <main class="error-main">
+    <p class="error-label">Page / Not found</p>
+    <h1>404<span class="period">.</span></h1>
+    <div class="error-details">
+      <div><h2>Nothing here.</h2><p>This page may have moved or doesn't exist.</p></div>
+      <a href="/">Back to home</a>
     </div>
-  </body>
+  </main>
+</body>
 </html>
