@@ -200,7 +200,7 @@ footer{align-items:center;gap:16px}
 .readme h1{font-size:clamp(28px,3.2vw,38px)}.readme h2{font-size:clamp(22px,2.6vw,30px);border-bottom:1px solid #ddd;padding-bottom:10px}.readme h3{font-size:20px}.readme h4{font-size:17px}
 .readme p,.readme ul,.readme ol,.readme pre,.readme blockquote{margin:1em 0}.readme li+li{margin-top:.35em}.readme a{text-decoration-thickness:1px;text-underline-offset:3px}
 .readme blockquote{border-left:2px solid #111;padding-left:18px;color:#555}.readme :not(pre)>code{background:#f2f2f2;padding:2px 4px}.readme pre{white-space:pre}
-.readme img{max-width:100%;height:auto}.readme img.readme-image-unsized{display:block;width:100%;aspect-ratio:16/10;object-fit:contain;background:#f5f5f5}.readme img.readme-badge{display:inline-block;width:120px;height:20px;object-fit:contain;vertical-align:middle}.readme img.readme-image-sized{object-fit:contain}
+.readme img{max-width:100%;height:auto}.readme img.readme-image-unsized{display:block;width:100%;aspect-ratio:16/10;object-fit:contain;background:transparent}.readme img.readme-badge{display:inline-block;width:120px;height:20px;object-fit:contain;vertical-align:middle}.readme img.readme-image-sized{object-fit:contain}
 .readme table{width:max-content;max-width:100%}.readme th{text-align:left}
 .activity-subhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px}.activity-subhead span{color:#666;font-size:12px}
 @media(max-width:700px){.detail-body{padding:35px 20px 60px}.detail-language-list{gap:7px 16px}.readme{font-size:15px}.readme img.readme-image-unsized{aspect-ratio:4/3}}
@@ -281,8 +281,7 @@ html[data-theme="dark"] .readme{color:#d2d2cf}
 html[data-theme="dark"] .readme h1,html[data-theme="dark"] .readme h2,html[data-theme="dark"] .readme h3,html[data-theme="dark"] .readme h4,html[data-theme="dark"] .readme h5,html[data-theme="dark"] .readme h6{color:#f1f1ee}
 html[data-theme="dark"] .readme blockquote{color:#b8b8b5;border-color:#999}
 html[data-theme="dark"] .readme pre,
-html[data-theme="dark"] .readme :not(pre)>code,
-html[data-theme="dark"] .readme img.readme-image-unsized{background:#282828}
+html[data-theme="dark"] .readme :not(pre)>code{background:#282828}
 html[data-theme="dark"] .readme td,html[data-theme="dark"] .readme th{border-color:#505050}
 html[data-theme="dark"] .contribution-day{background:#303030}
 html[data-theme="dark"] .contribution-day.level-1{background:#515151}
