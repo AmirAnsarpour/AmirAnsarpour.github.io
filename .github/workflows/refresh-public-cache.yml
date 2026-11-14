@@ -1,0 +1,24 @@
+name: Refresh public portfolio cache
+
+on:
+  schedule:
+    - cron: '17 */6 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: public-portfolio-cache
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Refresh public GitHub data in Supabase
+        run: python3 scripts/refresh-public-cache.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SUPABASE_CACHE_SECRET: ${{ secrets.SUPABASE_CACHE_SECRET }}

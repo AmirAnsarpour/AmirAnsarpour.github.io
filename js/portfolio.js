@@ -1,5 +1,30 @@
 (() => {
   const username = 'AmirAnsarpour';
+  const cacheUrl = 'https://nepmcsckxjlpkmnujoma.supabase.co/storage/v1/object/public/portfolio-public-cache/sites/amir-ansarpour/github.json';
+  const cacheKey = 'portfolio_central_cache_v1';
+  async function loadSharedCache() {
+    try {
+      const response = await fetch(cacheUrl);
+      if (!response.ok) throw new Error('Shared cache unavailable');
+      const data = await response.json();
+      if (data.version !== 1 || !Array.isArray(data.repos) || !data.profile || !Array.isArray(data.events)) throw new Error('Invalid shared cache');
+      try { localStorage.setItem(cacheKey, JSON.stringify(data)); } catch (_) { /* optional browser fallback */ }
+      return data;
+    } catch (_) {
+      try {
+        const data = JSON.parse(localStorage.getItem(cacheKey));
+        if (data?.version === 1 && Array.isArray(data.repos) && data.profile && Array.isArray(data.events)) return data;
+      } catch (_) { /* no previous cache */ }
+      return null;
+    }
+  }
+  const sharedCache = loadSharedCache().then(data => {
+    if (data?.updated_at) {
+      const updated = new Date(data.updated_at);
+      if (!Number.isNaN(updated.getTime())) document.querySelector('#cache-status').textContent = `GitHub / Updated ${updated.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric', timeZone:'UTC'})} UTC`;
+    }
+    return data;
+  });
   const list = document.querySelector('#project-list');
   const filter = document.querySelector('#language-filter');
   const sort = document.querySelector('#sort-projects');
@@ -124,43 +149,11 @@
     render();
   }
   async function load() {
-    const key = `github_repos_${username}`;
-    let cached;
-    try { cached = JSON.parse(localStorage.getItem(key)); } catch (_) { /* storage may be unavailable */ }
-    if (Array.isArray(cached?.data) && Date.now() - cached.timestamp < 1800000 && cached.data.every(repo => repo.languages)) { updateData(cached.data); return; }
-    if (Array.isArray(cached?.data)) updateData(cached.data);
-    try {
-      const all = [];
-      for (let page = 1; ; page++) {
-        const response = await fetch(`https://api.github.com/users/${username}/repos?per_page=100&page=${page}`);
-        if (!response.ok) throw new Error('GitHub request failed');
-        const batch = await response.json();
-        all.push(...batch);
-        if (batch.length < 100) break;
-      }
-      // Show the index immediately; language details enhance the filter when available.
-      updateData(all);
-      let next = 0;
-      await Promise.all(Array.from({length: 5}, async () => {
-        while (next < all.length) {
-          const repo = all[next++];
-          try {
-            const response = await fetch(`https://api.github.com/repos/${repo.full_name}/languages`);
-            if (response.ok) repo.languages = await response.json();
-          } catch (_) { /* primary language remains available */ }
-        }
-      }));
-      const currentFilter = filter.value;
-      updateData(all);
-      filter.value = currentFilter;
-      syncMenu(filter);
-      renderStack();
-      render();
-      try { localStorage.setItem(key, JSON.stringify({data: all, timestamp: Date.now()})); } catch (_) { /* optional cache */ }
-    } catch (_) {
-      if (Array.isArray(cached?.data)) { updateData(cached.data); count.textContent += ' / cached'; }
-      else { stackNote.textContent = 'Language data is unavailable right now.'; count.textContent = 'Project index unavailable'; list.replaceChildren(element('p', 'list-message', 'Projects could not be loaded. Please visit GitHub using the link below.')); }
-    }
+    const data = await sharedCache;
+    if (data) { updateData(data.repos); return; }
+    stackNote.textContent = 'Language data is unavailable right now.';
+    count.textContent = 'Project index unavailable';
+    list.replaceChildren(element('p', 'list-message', 'Projects could not be loaded. Please visit GitHub using the link below.'));
   }
   const dialog = document.querySelector('#project-dialog');
   const detailTitle = document.querySelector('#detail-title');
@@ -229,12 +222,9 @@
     readme.textContent = 'Loading README…';
     dialog.showModal();
     try {
-      const response = await fetch(`https://api.github.com/repos/${repo.full_name}/readme`, {headers: {'Accept': 'application/vnd.github.html+json'}});
-      if (!response.ok) throw new Error('README unavailable');
-      const html = await response.text();
       if (request !== detailRequest || !dialog.open) return;
-      if (!html.trimStart().startsWith('<')) throw new Error('README format unavailable');
-      renderReadme(html, repo);
+      if (repo.readme_html) renderReadme(repo.readme_html, repo);
+      else readme.textContent = 'This project does not have a README.';
     } catch (_) {
       if (request === detailRequest && dialog.open) readme.textContent = 'README could not be loaded. You can read it on GitHub.';
     }
@@ -246,9 +236,8 @@
     const followers = document.querySelector('#profile-followers');
     const following = document.querySelector('#profile-following');
     try {
-      const response = await fetch(`https://api.github.com/users/${encodeURIComponent(username)}`);
-      if (!response.ok) throw new Error('Profile unavailable');
-      const profile = await response.json();
+      const profile = (await sharedCache)?.profile;
+      if (!profile) throw new Error('Profile unavailable');
       if (!Number.isInteger(profile.followers) || !Number.isInteger(profile.following)) throw new Error('Invalid profile');
       followers.textContent = profile.followers.toLocaleString();
       following.textContent = profile.following.toLocaleString();
@@ -306,9 +295,8 @@
     window.addEventListener('scroll', hideDetail, {passive:true});
     window.addEventListener('resize', hideDetail);
     try {
-      const response = await fetch(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username)}?y=last`);
-      if (!response.ok) throw new Error('Calendar unavailable');
-      const data = await response.json();
+      const data = (await sharedCache)?.contributions;
+      if (!data) throw new Error('Calendar unavailable');
       const days = data.contributions;
       if (!Array.isArray(days) || !days.length) throw new Error('No calendar data');
       const valid = days.filter(day => /^\d{4}-\d{2}-\d{2}$/.test(day.date) && Number.isFinite(day.count) && day.level >= 0 && day.level <= 4).sort((a, b) => a.date.localeCompare(b.date));
@@ -358,9 +346,9 @@
     const container = document.querySelector('#activity-list');
     const labels = { PushEvent: 'Pushed code', CreateEvent: 'Created', DeleteEvent: 'Deleted a branch or tag', WatchEvent: 'Starred', ForkEvent: 'Forked', IssuesEvent: 'Updated an issue in', IssueCommentEvent: 'Commented on an issue in', PullRequestEvent: 'Updated a pull request in', PullRequestReviewEvent: 'Reviewed a pull request in', ReleaseEvent: 'Published a release in', PublicEvent: 'Made public' };
     try {
-      const response = await fetch(`https://api.github.com/users/${username}/events/public?per_page=30`);
-      if (!response.ok) throw new Error('Activity unavailable');
-      const events = (await response.json()).filter(event => labels[event.type] && event.repo?.name).slice(0, 6);
+      const publicEvents = (await sharedCache)?.events;
+      if (!publicEvents) throw new Error('Activity unavailable');
+      const events = publicEvents.filter(event => labels[event.type] && event.repo?.name).slice(0, 6);
       container.replaceChildren();
       if (!events.length) { container.append(element('p', 'list-message', 'No recent public activity to show.')); return; }
       events.forEach(event => {
