@@ -310,4 +310,14 @@ html[data-theme="dark"] .contact :is(a,button):focus-visible{outline-color:#1717
 .mode-switch[aria-checked="true"] .mode-knob{background:#151515;transform:translateX(12px)}
 .mode-switch:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 @media(max-width:400px){.topbar:not(.error-topbar) nav{gap:6px}.mode-label{font-size:11px}}
+
+.top-actions{display:flex;align-items:center;justify-content:flex-end;gap:28px}
+@media(max-width:700px){
+  .topbar:not(.error-topbar){grid-template-columns:minmax(0,1fr) auto;gap:0 16px;min-height:0;padding-top:max(12px,env(safe-area-inset-top))}
+  .topbar:not(.error-topbar) .identity{grid-column:1;grid-row:1;padding:6px 0 12px}
+  .topbar:not(.error-topbar) .top-actions{grid-column:2;grid-row:1;align-self:start}
+  .topbar:not(.error-topbar) nav{grid-column:1/-1;grid-row:2;justify-content:space-between;gap:12px;border-top:1px solid #e5e5e5}
+  .topbar:not(.error-topbar) nav a{min-height:44px}
+  html[data-theme="dark"] .topbar:not(.error-topbar) nav{border-top-color:#454545}
+}
 @media(prefers-reduced-motion:reduce){.mode-track,.mode-knob{transition:none}}
