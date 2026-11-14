@@ -313,7 +313,12 @@
   }
   async function openProject(repo) {
     const request = ++detailRequest;
-    detailTitle.textContent = repo.name;
+    detailTitle.replaceChildren();
+    repo.name.split(/([._-])/).forEach(part => {
+      detailTitle.append(document.createTextNode(part));
+      if (/^[._-]$/.test(part)) detailTitle.append(document.createElement('wbr'));
+    });
+    detailTitle.classList.toggle('detail-title-long', repo.name.length >= 23);
     detailDescription.textContent = repo.description || 'No description provided.';
     detailLanguages.replaceChildren();
     const languageHeading = element('span', 'detail-languages-label', 'Languages / By code size');
