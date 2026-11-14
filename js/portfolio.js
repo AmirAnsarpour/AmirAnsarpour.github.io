@@ -62,6 +62,7 @@
     });
     count.textContent = `${items.length} project${items.length === 1 ? '' : 's'}${selected ? ` / ${selected}` : ''}`;
     const pageCount = Math.max(1, Math.ceil(items.length / limit));
+    previous.parentElement.hidden = pageCount <= 1;
     page = Math.min(page, pageCount - 1);
     previous.disabled = page === 0;
     nextPage.disabled = page >= pageCount - 1;
@@ -186,13 +187,29 @@
   }
   function projectDetails(repo) {
     detailExtras.replaceChildren();
+    const controls = element('div', 'detail-extra-controls', '');
+    const panel = element('div', 'detail-extra-panel', '');
+    panel.id = 'detail-extra-panel';
+    panel.hidden = true;
+    controls.append(detailLinks);
+    const buttons = [];
     function group(title, content) {
-      const panel = element('details', 'detail-extra', '');
-      const summary = element('summary', '', title);
-      panel.append(summary, content);
-      detailExtras.append(panel);
+      const button = element('button', 'detail-extra-button', title);
+      button.type = 'button';
+      button.setAttribute('aria-expanded', 'false');
+      button.setAttribute('aria-controls', panel.id);
+      button.addEventListener('click', () => {
+        const opening = button.getAttribute('aria-expanded') !== 'true';
+        buttons.forEach(item => item.setAttribute('aria-expanded', 'false'));
+        button.setAttribute('aria-expanded', String(opening));
+        panel.hidden = !opening;
+        panel.replaceChildren();
+        if (opening) panel.append(content);
+      });
+      buttons.push(button);
+      controls.append(button);
     }
-    if (Array.isArray(repo.contributors) && repo.contributors.length) {
+    if (Array.isArray(repo.contributors) && repo.contributors.some(person => person.login && person.login.toLowerCase() !== username.toLowerCase())) {
       const section = element('section', 'detail-contributors', '');
       section.append(element('h3', 'detail-side-label', 'Contributors'));
       const contributors = element('div', 'contributor-list', '');
@@ -203,7 +220,7 @@
         link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
         contributors.append(link);
       });
-      if (contributors.childNodes.length) { section.append(contributors); detailExtras.append(section); }
+      if (contributors.childNodes.length) { section.append(contributors); controls.append(section); }
     }
     const release = element('div', 'extra-content', '');
     if (repo.latest_release) {
@@ -228,6 +245,7 @@
       commits.append(row);
     });
     if (commits.childNodes.length) group('Recent changes', commits);
+    detailExtras.append(controls, panel);
   }
   async function loadStarred() {
     const container = document.querySelector('#starred-list');
@@ -329,7 +347,7 @@
     detailTitle.classList.toggle('detail-title-long', repo.name.length >= 23);
     detailDescription.textContent = repo.description || 'No description provided.';
     detailLanguages.replaceChildren();
-    const languageHeading = element('span', 'detail-languages-label', 'Languages / By code size');
+    const languageHeading = element('span', 'detail-languages-label', 'Languages by code size');
     detailLanguages.append(languageHeading);
     const breakdown = Object.entries(repo.languages || {}).filter(([,bytes]) => Number.isFinite(bytes) && bytes > 0).sort((a,b) => b[1] - a[1]);
     const totalBytes = breakdown.reduce((sum, [,bytes]) => sum + bytes, 0);
