@@ -301,3 +301,15 @@ html[data-theme="dark"]::-webkit-scrollbar-thumb,html[data-theme="dark"] .projec
 html[data-theme="dark"] .detail-header button{border-color:#999}
 
 html[data-theme="dark"] .contact :is(a,button):focus-visible{outline-color:#171717}
+
+/* Compact theme control with a clear, consistent touch target. */
+.mode-toggle{display:inline-flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;min-height:44px}
+.mode-toggle-frame{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:1px solid #c8c8c8;transition:border-color .15s ease,background-color .15s ease}
+.mode-toggle:hover .mode-toggle-frame{border-color:#111;background:#f3f3f3}
+.mode-icon{display:block;width:17px;height:17px}
+.mode-sun,html[data-theme="dark"] .mode-moon{display:none}
+html[data-theme="dark"] .mode-sun{display:block}
+html[data-theme="dark"] .mode-toggle-frame{border-color:#646464}
+html[data-theme="dark"] .mode-toggle:hover .mode-toggle-frame{border-color:#eee;background:#303030}
+@media(prefers-reduced-motion:reduce){.mode-toggle-frame{transition:none}}
+.topbar nav{align-items:center}

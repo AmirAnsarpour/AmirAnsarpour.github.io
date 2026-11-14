@@ -9,9 +9,9 @@
     const dark = mode === 'dark';
     root.dataset.theme = mode;
     document.querySelectorAll('.mode-toggle').forEach(button => {
-      button.textContent = dark ? 'Light' : 'Dark';
       button.setAttribute('aria-pressed', String(dark));
       button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      button.title = dark ? 'Switch to light mode' : 'Switch to dark mode';
     });
     const themeColor = document.querySelector('meta[name="theme-color"]');
     if (themeColor) themeColor.setAttribute('content', dark ? '#151515' : '#ffffff');
