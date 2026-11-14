@@ -185,10 +185,6 @@ footer{align-items:center;gap:16px}
 .tooltip-date{font-size:11px;color:#666;margin-top:5px}
 
 /* The project reader stays within the site's black and white type system. */
-.project-dialog{scrollbar-width:thin;scrollbar-color:#777 #f1f1f1}
-.project-dialog::-webkit-scrollbar,.readme pre::-webkit-scrollbar,.readme table::-webkit-scrollbar{width:8px;height:8px}
-.project-dialog::-webkit-scrollbar-track,.readme pre::-webkit-scrollbar-track,.readme table::-webkit-scrollbar-track{background:#f1f1f1}
-.project-dialog::-webkit-scrollbar-thumb,.readme pre::-webkit-scrollbar-thumb,.readme table::-webkit-scrollbar-thumb{background:#777;border:2px solid #f1f1f1;border-radius:0}
 .detail-header{min-height:60px}.detail-header button{min-height:44px;padding:8px 0}
 .detail-body{padding:clamp(35px,5vw,65px) clamp(22px,5vw,56px) 80px}
 .detail-body>h2{font-size:clamp(35px,5vw,68px);line-height:1.03}
@@ -203,8 +199,16 @@ footer{align-items:center;gap:16px}
 .readme h1,.readme h2,.readme h3,.readme h4,.readme h5,.readme h6{font-family:inherit;font-weight:500;color:#111;letter-spacing:-.035em;line-height:1.2;margin:1.8em 0 .65em;overflow-wrap:anywhere}
 .readme h1{font-size:clamp(28px,3.2vw,38px)}.readme h2{font-size:clamp(22px,2.6vw,30px);border-bottom:1px solid #ddd;padding-bottom:10px}.readme h3{font-size:20px}.readme h4{font-size:17px}
 .readme p,.readme ul,.readme ol,.readme pre,.readme blockquote{margin:1em 0}.readme li+li{margin-top:.35em}.readme a{text-decoration-thickness:1px;text-underline-offset:3px}
-.readme blockquote{border-left:2px solid #111;padding-left:18px;color:#555}.readme :not(pre)>code{background:#f2f2f2;padding:2px 4px}.readme pre{white-space:pre;scrollbar-width:thin;scrollbar-color:#888 #f2f2f2}
+.readme blockquote{border-left:2px solid #111;padding-left:18px;color:#555}.readme :not(pre)>code{background:#f2f2f2;padding:2px 4px}.readme pre{white-space:pre}
 .readme img{max-width:100%;height:auto}.readme img.readme-image-unsized{display:block;width:100%;aspect-ratio:16/10;object-fit:contain;background:#f5f5f5}.readme img.readme-badge{display:inline-block;width:120px;height:20px;object-fit:contain;vertical-align:middle}.readme img.readme-image-sized{object-fit:contain}
-.readme table{width:max-content;max-width:100%;scrollbar-width:thin;scrollbar-color:#888 #f2f2f2}.readme th{text-align:left}
+.readme table{width:max-content;max-width:100%}.readme th{text-align:left}
 .activity-subhead{display:flex;align-items:baseline;justify-content:space-between;gap:16px}.activity-subhead span{color:#666;font-size:12px}
 @media(max-width:700px){.detail-body{padding:35px 20px 60px}.detail-language-list{gap:7px 16px}.readme{font-size:15px}.readme img.readme-image-unsized{aspect-ratio:4/3}}
+
+/* A discreet scrollbar for the page and project reader. */
+html::-webkit-scrollbar,.project-dialog::-webkit-scrollbar,.readme pre::-webkit-scrollbar,.readme table::-webkit-scrollbar{width:5px;height:5px}
+html::-webkit-scrollbar-track,.project-dialog::-webkit-scrollbar-track,.readme pre::-webkit-scrollbar-track,.readme table::-webkit-scrollbar-track{background:transparent}
+html::-webkit-scrollbar-thumb,.project-dialog::-webkit-scrollbar-thumb,.readme pre::-webkit-scrollbar-thumb,.readme table::-webkit-scrollbar-thumb{background:#aaa;border:0;border-radius:10px}
+html::-webkit-scrollbar-thumb:hover,.project-dialog::-webkit-scrollbar-thumb:hover,.readme pre::-webkit-scrollbar-thumb:hover,.readme table::-webkit-scrollbar-thumb:hover{background:#777}
+html::-webkit-scrollbar-button,.project-dialog::-webkit-scrollbar-button,.readme pre::-webkit-scrollbar-button,.readme table::-webkit-scrollbar-button{display:none;width:0;height:0}
+@supports (-moz-appearance:none){html,.project-dialog,.readme pre,.readme table{scrollbar-width:thin;scrollbar-color:#aaa transparent}}
