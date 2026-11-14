@@ -235,12 +235,12 @@
     const previous = document.querySelector('#starred-previous');
     const next = document.querySelector('#starred-next');
     const status = document.querySelector('#starred-page-status');
-    const starred = (await sharedCache)?.starred;
-    if (!Array.isArray(starred)) { container.replaceChildren(element('p', 'list-message', 'Starred projects are temporarily unavailable.')); return; }
+    const cached = (await sharedCache)?.starred;
+    if (!Array.isArray(cached)) { container.replaceChildren(element('p', 'list-message', 'Starred projects are temporarily unavailable.')); return; }
+    const starred = cached.filter(repo => repo && safeUrl(repo.html_url) && repo.full_name);
     if (!starred.length) { container.replaceChildren(element('p', 'list-message', 'No starred projects to show yet.')); return; }
     let page = 0;
     const pageCount = Math.ceil(starred.length / 5);
-    container.classList.toggle('has-pages', pageCount > 1);
     function renderPage() {
       container.replaceChildren();
       for (const repo of starred.slice(page * 5, (page + 1) * 5)) {
