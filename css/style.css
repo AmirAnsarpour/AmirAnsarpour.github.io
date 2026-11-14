@@ -301,12 +301,13 @@ html[data-theme="dark"] .contact :is(a,button):focus-visible{outline-color:#1717
 
 .topbar nav{align-items:center}
 
-/* Text-only color mode selector. */
-.mode-switch{display:inline-flex;align-items:center;flex:none;border:1px solid #c8c8c8}
-.mode-choice{display:inline-flex;align-items:center;justify-content:center;min-width:43px;min-height:42px;border:0;background:transparent;color:#777;font:inherit;font-size:11px;cursor:pointer}
-.mode-choice[aria-pressed="true"]{background:#151515;color:#fff}
-.mode-choice:focus-visible{position:relative;outline:2px solid currentColor;outline-offset:-3px}
-html[data-theme="dark"] .mode-switch{border-color:#646464}
-html[data-theme="dark"] .mode-choice{color:#aaa}
-html[data-theme="dark"] .mode-choice[aria-pressed="true"]{background:#ededeb;color:#151515}
-@media(max-width:400px){.topbar:not(.error-topbar) nav{gap:6px}.mode-choice{min-width:40px}}
+/* A quiet theme switch with an accessible touch target. */
+.mode-switch{display:inline-flex;align-items:center;gap:8px;flex:none;min-height:44px;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:pointer}
+.mode-label{font-size:12px}
+.mode-track{display:inline-flex;align-items:center;width:26px;height:14px;padding:2px;border:1px solid #999;border-radius:20px;transition:background-color .18s,border-color .18s}
+.mode-knob{width:8px;height:8px;border-radius:50%;background:#777;transition:transform .18s,background-color .18s}
+.mode-switch[aria-checked="true"] .mode-track{background:#ededeb;border-color:#ededeb}
+.mode-switch[aria-checked="true"] .mode-knob{background:#151515;transform:translateX(12px)}
+.mode-switch:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+@media(max-width:400px){.topbar:not(.error-topbar) nav{gap:6px}.mode-label{font-size:11px}}
+@media(prefers-reduced-motion:reduce){.mode-track,.mode-knob{transition:none}}
