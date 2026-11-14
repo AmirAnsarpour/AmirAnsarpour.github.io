@@ -271,8 +271,8 @@ html[data-theme="dark"] .filter-option[aria-pressed="true"]{background:#353535;c
 html[data-theme="dark"] .index-footer .pagination button{border-color:#666;color:#ededeb}
 html[data-theme="dark"] .index-footer .pagination button:disabled{border-color:#393939;color:#777}
 html[data-theme="dark"] .index-footer .pagination button:not(:disabled):hover{background:#ededeb;color:#151515}
-html[data-theme="dark"] .contact{background:#0f0f0f;color:#ededeb;border-top:1px solid #353535}
-html[data-theme="dark"] .contact-links{border-color:#555}
+html[data-theme="dark"] .contact{background:#e7e7e3;color:#171717;border-top:1px solid #e7e7e3}
+html[data-theme="dark"] .contact-links{border-color:#999}
 html[data-theme="dark"] .project-dialog{background:#1c1c1c;color:#ededeb;border-color:#555}
 html[data-theme="dark"] .project-dialog::backdrop{background:rgba(0,0,0,.72)}
 html[data-theme="dark"] .detail-header{background:#1c1c1c;border-color:#454545}
@@ -299,3 +299,5 @@ html[data-theme="dark"]::-webkit-scrollbar-thumb,html[data-theme="dark"] .projec
 @supports (-moz-appearance:none){html[data-theme="dark"],html[data-theme="dark"] :is(.project-dialog,.readme pre,.readme table){scrollbar-color:#777 transparent}}
 @media(max-width:700px){html[data-theme="dark"] .stats div:nth-child(-n+2),html[data-theme="dark"] .profile-item:first-child{border-color:#464646}}
 html[data-theme="dark"] .detail-header button{border-color:#999}
+
+html[data-theme="dark"] .contact :is(a,button):focus-visible{outline-color:#171717}
