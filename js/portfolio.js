@@ -240,6 +240,7 @@
     if (!starred.length) { container.replaceChildren(element('p', 'list-message', 'No starred projects to show yet.')); return; }
     let page = 0;
     const pageCount = Math.ceil(starred.length / 5);
+    container.classList.toggle('has-pages', pageCount > 1);
     function renderPage() {
       container.replaceChildren();
       for (const repo of starred.slice(page * 5, (page + 1) * 5)) {
@@ -250,7 +251,14 @@
         const info = element('span', 'starred-info', '');
         info.append(element('span', 'starred-name', repo.full_name));
         if (repo.description) info.append(element('span', 'starred-description', repo.description));
-        row.append(info, element('span', 'starred-meta', [repo.language, Number.isFinite(repo.stargazers_count) ? `${repo.stargazers_count.toLocaleString()} stars` : ''].filter(Boolean).join(' / ')));
+        const meta = element('span', 'starred-meta', '');
+        if (Number.isFinite(repo.stargazers_count)) {
+          const stars = element('span', 'starred-stars', '');
+          stars.append(element('strong', '', repo.stargazers_count.toLocaleString()), document.createTextNode(repo.stargazers_count === 1 ? ' star' : ' stars'));
+          meta.append(stars);
+        }
+        if (repo.language) meta.append(element('span', 'starred-language', repo.language));
+        row.append(info, meta);
         container.append(row);
       }
       previous.disabled = page === 0;
