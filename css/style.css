@@ -212,3 +212,12 @@ html::-webkit-scrollbar-thumb,.project-dialog::-webkit-scrollbar-thumb,.readme p
 html::-webkit-scrollbar-thumb:hover,.project-dialog::-webkit-scrollbar-thumb:hover,.readme pre::-webkit-scrollbar-thumb:hover,.readme table::-webkit-scrollbar-thumb:hover{background:#777}
 html::-webkit-scrollbar-button,.project-dialog::-webkit-scrollbar-button,.readme pre::-webkit-scrollbar-button,.readme table::-webkit-scrollbar-button{display:none;width:0;height:0}
 @supports (-moz-appearance:none){html,.project-dialog,.readme pre,.readme table{scrollbar-width:thin;scrollbar-color:#aaa transparent}}
+
+/* Invert the complete page for the requested black and white reversal. */
+html[data-theme="dark"]{filter:invert(1)}
+.mode-toggle{border:0;background:none;color:inherit;font:inherit;padding:0;cursor:pointer}
+.mode-toggle:focus-visible{outline:2px solid currentColor;outline-offset:4px}
+.error-actions{display:flex;align-items:center;gap:24px;font-size:13px}
+@media(max-width:700px){.topbar nav .mode-toggle{min-height:44px}}
+/* Modal dialogs render in the browser's top layer, outside the root filter. */
+html[data-theme="dark"] .project-dialog{filter:invert(1)}
