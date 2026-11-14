@@ -14,7 +14,7 @@
       button.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
     });
     const themeColor = document.querySelector('meta[name="theme-color"]');
-    if (themeColor) themeColor.setAttribute('content', dark ? '#000000' : '#ffffff');
+    if (themeColor) themeColor.setAttribute('content', dark ? '#151515' : '#ffffff');
   }
   function init() {
     sync();

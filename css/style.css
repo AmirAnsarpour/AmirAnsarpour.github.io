@@ -213,11 +213,89 @@ html::-webkit-scrollbar-thumb:hover,.project-dialog::-webkit-scrollbar-thumb:hov
 html::-webkit-scrollbar-button,.project-dialog::-webkit-scrollbar-button,.readme pre::-webkit-scrollbar-button,.readme table::-webkit-scrollbar-button{display:none;width:0;height:0}
 @supports (-moz-appearance:none){html,.project-dialog,.readme pre,.readme table{scrollbar-width:thin;scrollbar-color:#aaa transparent}}
 
-/* Invert the complete page for the requested black and white reversal. */
-html[data-theme="dark"]{filter:invert(1)}
 .mode-toggle{border:0;background:none;color:inherit;font:inherit;padding:0;cursor:pointer}
 .mode-toggle:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 .error-actions{display:flex;align-items:center;gap:24px;font-size:13px}
 @media(max-width:700px){.topbar nav .mode-toggle{min-height:44px}}
-/* Modal dialogs render in the browser's top layer, outside the root filter. */
-html[data-theme="dark"] .project-dialog{filter:invert(1)}
+
+/* A softer, purpose-built dark palette. Images keep their original colors. */
+html[data-theme="dark"]{color-scheme:dark;background:#151515;color:#ededeb}
+html[data-theme="dark"] body{background:#151515}
+html[data-theme="dark"] .topbar,
+html[data-theme="dark"] .hero-bottom,
+html[data-theme="dark"] .index-head,
+html[data-theme="dark"] .project-row,
+html[data-theme="dark"] .stats,
+html[data-theme="dark"] .profile-details,
+html[data-theme="dark"] .stack-list,
+html[data-theme="dark"] .stack-item,
+html[data-theme="dark"] .about-grid,
+html[data-theme="dark"] .contributions,
+html[data-theme="dark"] #activity-list,
+html[data-theme="dark"] .activity-row,
+html[data-theme="dark"] .error-details{border-color:#464646}
+html[data-theme="dark"] .identity span,
+html[data-theme="dark"] .stats-label span,
+html[data-theme="dark"] .profile-label,
+html[data-theme="dark"] .timezone-label,
+html[data-theme="dark"] .stack-note,
+html[data-theme="dark"] .select-control>span,
+html[data-theme="dark"] .search-control span,
+html[data-theme="dark"] .index-head,
+html[data-theme="dark"] .project-description,
+html[data-theme="dark"] .activity-date,
+html[data-theme="dark"] .activity-subhead span,
+html[data-theme="dark"] .contributions-label,
+html[data-theme="dark"] #contribution-total,
+html[data-theme="dark"] .contribution-months,
+html[data-theme="dark"] .contribution-legend,
+html[data-theme="dark"] .tooltip-date,
+html[data-theme="dark"] .detail-languages-label,
+html[data-theme="dark"] .detail-language span:last-child,
+html[data-theme="dark"] .detail-language-empty,
+html[data-theme="dark"] .readme-heading{color:#aaa}
+html[data-theme="dark"] .profile-separator{color:#777}
+html[data-theme="dark"] .stack-item{background:#151515;color:#ededeb}
+html[data-theme="dark"] .stack-track{background:#393939}
+html[data-theme="dark"] .stack-fill{background:#d8d8d4}
+html[data-theme="dark"] .search-control input,
+html[data-theme="dark"] .controls .select-control select,
+html[data-theme="dark"] .filter-menu summary,
+html[data-theme="dark"] .filter-options,
+html[data-theme="dark"] .filter-option{background:#1d1d1d;color:#ededeb;border-color:#555}
+html[data-theme="dark"] .search-control input::placeholder{color:#aaa}
+html[data-theme="dark"] .filter-menu[open] summary,
+html[data-theme="dark"] .filter-option:hover,
+html[data-theme="dark"] .filter-option:focus-visible,
+html[data-theme="dark"] .filter-option[aria-pressed="true"]{background:#353535;color:#fff}
+html[data-theme="dark"] .index-footer .pagination button{border-color:#666;color:#ededeb}
+html[data-theme="dark"] .index-footer .pagination button:disabled{border-color:#393939;color:#777}
+html[data-theme="dark"] .index-footer .pagination button:not(:disabled):hover{background:#ededeb;color:#151515}
+html[data-theme="dark"] .contact{background:#0f0f0f;color:#ededeb;border-top:1px solid #353535}
+html[data-theme="dark"] .contact-links{border-color:#555}
+html[data-theme="dark"] .project-dialog{background:#1c1c1c;color:#ededeb;border-color:#555}
+html[data-theme="dark"] .project-dialog::backdrop{background:rgba(0,0,0,.72)}
+html[data-theme="dark"] .detail-header{background:#1c1c1c;border-color:#454545}
+html[data-theme="dark"] .detail-language-list,
+html[data-theme="dark"] .readme h2,
+html[data-theme="dark"] .contribution-footer{border-color:#414141}
+html[data-theme="dark"] .readme-heading{border-color:#666}
+html[data-theme="dark"] .readme{color:#d2d2cf}
+html[data-theme="dark"] .readme h1,html[data-theme="dark"] .readme h2,html[data-theme="dark"] .readme h3,html[data-theme="dark"] .readme h4,html[data-theme="dark"] .readme h5,html[data-theme="dark"] .readme h6{color:#f1f1ee}
+html[data-theme="dark"] .readme blockquote{color:#b8b8b5;border-color:#999}
+html[data-theme="dark"] .readme pre,
+html[data-theme="dark"] .readme :not(pre)>code,
+html[data-theme="dark"] .readme img.readme-image-unsized{background:#282828}
+html[data-theme="dark"] .readme td,html[data-theme="dark"] .readme th{border-color:#505050}
+html[data-theme="dark"] .contribution-day{background:#303030}
+html[data-theme="dark"] .contribution-day.level-1{background:#515151}
+html[data-theme="dark"] .contribution-day.level-2{background:#797979}
+html[data-theme="dark"] .contribution-day.level-3{background:#ababaa}
+html[data-theme="dark"] .contribution-day.level-4{background:#e6e6e2}
+html[data-theme="dark"] .contribution-tooltip{background:#242424;border-color:#666}
+html[data-theme="dark"] .tooltip-count{color:#f1f1ee}
+html[data-theme="dark"] :is(a,button,select,input,summary,.stack-item,.contribution-grid button):focus-visible{outline-color:#ededeb}
+html[data-theme="dark"]::-webkit-scrollbar-thumb,html[data-theme="dark"] .project-dialog::-webkit-scrollbar-thumb,html[data-theme="dark"] .readme pre::-webkit-scrollbar-thumb,html[data-theme="dark"] .readme table::-webkit-scrollbar-thumb{background:#777}
+@supports (-moz-appearance:none){html[data-theme="dark"],html[data-theme="dark"] :is(.project-dialog,.readme pre,.readme table){scrollbar-color:#777 transparent}}
+@media(max-width:700px){html[data-theme="dark"] .stats div:nth-child(-n+2),html[data-theme="dark"] .profile-item:first-child{border-color:#464646}}
+html[data-theme="dark"] .detail-header button{border-color:#999}
