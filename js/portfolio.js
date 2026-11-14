@@ -192,10 +192,21 @@
       panel.append(summary, content);
       detailExtras.append(panel);
     }
+    if (Array.isArray(repo.contributors) && repo.contributors.length) {
+      const section = element('section', 'detail-contributors', '');
+      section.append(element('h3', 'detail-side-label', 'Contributors'));
+      const contributors = element('div', 'contributor-list', '');
+      repo.contributors.forEach(person => {
+        const url = safeUrl(person.html_url);
+        if (!url || !person.login) return;
+        const link = element('a', 'contributor', person.login);
+        link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+        contributors.append(link);
+      });
+      if (contributors.childNodes.length) { section.append(contributors); detailExtras.append(section); }
+    }
     const release = element('div', 'extra-content', '');
-    if (!Object.prototype.hasOwnProperty.call(repo, 'latest_release')) release.append(element('p', 'extra-muted', 'Release information is unavailable right now.'));
-    else if (!repo.latest_release) release.append(element('p', 'extra-muted', 'No published release yet.'));
-    else {
+    if (repo.latest_release) {
       const item = repo.latest_release;
       addExternalLink(release, item.name || item.tag_name || 'View release', item.html_url);
       if (item.name && item.tag_name && item.name !== item.tag_name) release.append(element('span', 'extra-muted', item.tag_name));
@@ -205,12 +216,10 @@
         item.assets.forEach(asset => addExternalLink(downloads, asset.name || 'Download', asset.browser_download_url));
         if (downloads.childNodes.length) release.append(downloads);
       }
+      group('Latest release', release);
     }
-    group('Latest release', release);
     const commits = element('div', 'extra-content extra-commits', '');
-    if (!Array.isArray(repo.recent_commits)) commits.append(element('p', 'extra-muted', 'Recent changes are unavailable right now.'));
-    else if (!repo.recent_commits.length) commits.append(element('p', 'extra-muted', 'No commits to show.'));
-    else repo.recent_commits.forEach(commit => {
+    if (Array.isArray(repo.recent_commits)) repo.recent_commits.forEach(commit => {
       const row = element('div', 'extra-commit', '');
       const url = safeUrl(commit.html_url);
       if (url) addExternalLink(row, commit.message || 'View commit', url);
@@ -218,33 +227,22 @@
       if (displayDate(commit.date)) row.append(element('time', 'extra-muted', displayDate(commit.date)));
       commits.append(row);
     });
-    group('Recent changes', commits);
-    const contributors = element('div', 'extra-content contributor-list', '');
-    if (!Array.isArray(repo.contributors)) contributors.append(element('p', 'extra-muted', 'Contributors are unavailable right now.'));
-    else if (!repo.contributors.length) contributors.append(element('p', 'extra-muted', 'No contributors to show.'));
-    else repo.contributors.forEach(person => {
-      const url = safeUrl(person.html_url);
-      if (!url || !person.login) return;
-      const link = element('a', 'contributor', '');
-      link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
-      const avatarUrl = safeUrl(person.avatar_url);
-      if (avatarUrl) { const avatar = document.createElement('img'); avatar.src = avatarUrl; avatar.alt = ''; avatar.width = 32; avatar.height = 32; avatar.loading = 'lazy'; link.append(avatar); }
-      link.append(element('span', '', person.login));
-      contributors.append(link);
-    });
-    group('Contributors', contributors);
+    if (commits.childNodes.length) group('Recent changes', commits);
   }
   async function loadStarred() {
     const container = document.querySelector('#starred-list');
-    const more = document.querySelector('#starred-more');
+    const pagination = document.querySelector('#starred-pagination');
+    const previous = document.querySelector('#starred-previous');
+    const next = document.querySelector('#starred-next');
+    const status = document.querySelector('#starred-page-status');
     const starred = (await sharedCache)?.starred;
     if (!Array.isArray(starred)) { container.replaceChildren(element('p', 'list-message', 'Starred projects are temporarily unavailable.')); return; }
     if (!starred.length) { container.replaceChildren(element('p', 'list-message', 'No starred projects to show yet.')); return; }
-    let shown = 0;
-    function showMore() {
-      const end = Math.min(shown + 6, starred.length);
-      for (; shown < end; shown++) {
-        const repo = starred[shown];
+    let page = 0;
+    const pageCount = Math.ceil(starred.length / 5);
+    function renderPage() {
+      container.replaceChildren();
+      for (const repo of starred.slice(page * 5, (page + 1) * 5)) {
         const url = safeUrl(repo.html_url);
         if (!url || !repo.full_name) continue;
         const row = element('a', 'starred-row', '');
@@ -255,11 +253,14 @@
         row.append(info, element('span', 'starred-meta', [repo.language, Number.isFinite(repo.stargazers_count) ? `${repo.stargazers_count.toLocaleString()} stars` : ''].filter(Boolean).join(' / ')));
         container.append(row);
       }
-      more.hidden = shown >= starred.length;
+      previous.disabled = page === 0;
+      next.disabled = page === pageCount - 1;
+      status.textContent = `${String(page + 1).padStart(2, '0')} / ${String(pageCount).padStart(2, '0')}`;
+      pagination.hidden = pageCount <= 1;
     }
-    container.replaceChildren();
-    more.addEventListener('click', showMore);
-    showMore();
+    previous.addEventListener('click', () => { if (page > 0) { page--; renderPage(); } });
+    next.addEventListener('click', () => { if (page < pageCount - 1) { page++; renderPage(); } });
+    renderPage();
   }
   loadStarred();
   function renderReadme(html, repo) {
