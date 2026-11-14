@@ -64,12 +64,19 @@
     const pageCount = Math.max(1, Math.ceil(items.length / limit));
     previous.parentElement.hidden = pageCount <= 1;
     page = Math.min(page, pageCount - 1);
+    const baseSize = Math.floor(items.length / pageCount);
+    const largerPages = items.length % pageCount;
+    const slots = baseSize + (largerPages ? 1 : 0);
+    const start = page * baseSize + Math.min(page, largerPages);
+    const size = baseSize + (page < largerPages ? 1 : 0);
+    list.classList.toggle('has-pages', pageCount > 1);
+    if (pageCount > 1) list.style.setProperty('--project-list-height', `calc(${Array(slots).fill('var(--project-row-height)').join(' + ')})`);
     previous.disabled = page === 0;
     nextPage.disabled = page >= pageCount - 1;
     pageStatus.textContent = `${String(page + 1).padStart(2, '0')} / ${String(pageCount).padStart(2, '0')}`;
     list.replaceChildren();
     if (!items.length) list.append(element('p', 'list-message', 'No projects found for this language.'));
-    for (const repo of items.slice(page * limit, (page + 1) * limit)) {
+    for (const repo of items.slice(start, start + size)) {
       const row = element('a', 'project-row', '');
       row.href = repo.html_url;
       row.addEventListener('click', event => { event.preventDefault(); openProject(repo); });
@@ -181,6 +188,30 @@
     link.rel = 'noopener noreferrer';
     parent.append(link);
   }
+  function actionIcon(name) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 24 24');
+    svg.setAttribute('aria-hidden', 'true');
+    const path = document.createElementNS(ns, 'path');
+    if (name === 'github') {
+      path.setAttribute('d', 'M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.33-3.79-1.33-.51-1.3-1.25-1.64-1.25-1.64-1.02-.69.08-.68.08-.68 1.13.08 1.73 1.16 1.73 1.16 1 1.71 2.62 1.22 3.26.93.1-.72.39-1.22.71-1.5-2.5-.28-5.12-1.25-5.12-5.56 0-1.23.44-2.23 1.16-3.02-.12-.28-.5-1.42.11-2.97 0 0 .95-.3 3.1 1.15a10.8 10.8 0 0 1 5.65 0c2.15-1.46 3.1-1.15 3.1-1.15.61 1.55.23 2.69.11 2.97.72.79 1.16 1.79 1.16 3.02 0 4.32-2.63 5.27-5.13 5.55.4.35.76 1.02.76 2.06v3.11c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z');
+      path.setAttribute('fill', 'currentColor');
+    } else {
+      path.setAttribute('d', name === 'website' ? 'M14 4h6v6m0-6-9 9M19 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h5' : 'M12 3v12m-4-4 4 4 4-4M4 17v3h16v-3');
+      path.setAttribute('fill', 'none'); path.setAttribute('stroke', 'currentColor'); path.setAttribute('stroke-width', '1.6'); path.setAttribute('stroke-linecap', 'round'); path.setAttribute('stroke-linejoin', 'round');
+    }
+    svg.append(path);
+    return svg;
+  }
+  function addIconLink(parent, label, url, icon) {
+    const safe = safeUrl(url);
+    if (!safe) return;
+    const link = element('a', 'detail-icon-action', '');
+    link.href = safe; link.target = '_blank'; link.rel = 'noopener noreferrer';
+    link.setAttribute('aria-label', label); link.title = label;
+    link.append(actionIcon(icon)); parent.append(link);
+  }
   function displayDate(value) {
     const date = new Date(value);
     return value && !Number.isNaN(date.getTime()) ? date.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric', timeZone:'UTC'}) : '';
@@ -191,7 +222,6 @@
     const panel = element('div', 'detail-extra-panel', '');
     panel.id = 'detail-extra-panel';
     panel.hidden = true;
-    controls.append(detailLinks);
     const buttons = [];
     function group(title, content) {
       const button = element('button', 'detail-extra-button', title);
@@ -364,8 +394,18 @@
       detailLanguages.append(element('p', 'detail-language-empty', repo.language ? `${repo.language} / Percentage unavailable` : 'Language data unavailable'));
     }
     detailLinks.replaceChildren();
-    addExternalLink(detailLinks, 'View on GitHub', repo.html_url);
-    if (repo.homepage && repo.homepage.trim()) addExternalLink(detailLinks, 'Visit project website', repo.homepage.trim());
+    addIconLink(detailLinks, 'View on GitHub', repo.html_url, 'github');
+    if (repo.homepage && repo.homepage.trim()) addIconLink(detailLinks, 'Visit project website', repo.homepage.trim(), 'website');
+    const assets = Array.isArray(repo.latest_release?.assets) ? repo.latest_release.assets.filter(asset => asset && safeUrl(asset.browser_download_url)) : [];
+    if (assets.length === 1) addIconLink(detailLinks, `Download ${assets[0].name || 'project file'}`, assets[0].browser_download_url, 'download');
+    else if (assets.length > 1) {
+      const menu = element('details', 'detail-download-menu', '');
+      const summary = element('summary', 'detail-icon-action', '');
+      summary.setAttribute('aria-label', 'Download project files'); summary.title = 'Download project files'; summary.append(actionIcon('download'));
+      const downloads = element('div', 'detail-download-list', '');
+      assets.forEach(asset => addExternalLink(downloads, asset.name || 'Download', asset.browser_download_url));
+      menu.append(summary, downloads); detailLinks.append(menu);
+    }
     projectDetails(repo);
     readme.textContent = 'Loading README…';
     dialog.showModal();
@@ -502,6 +542,7 @@
   loadContributions();
   async function loadActivity() {
     const container = document.querySelector('#activity-list');
+    const more = document.querySelector('#activity-more');
     const labels = { PushEvent: 'Pushed code', CreateEvent: 'Created', DeleteEvent: 'Deleted a branch or tag', WatchEvent: 'Starred', ForkEvent: 'Forked', IssuesEvent: 'Updated an issue in', IssueCommentEvent: 'Commented on an issue in', PullRequestEvent: 'Updated a pull request in', PullRequestReviewEvent: 'Reviewed a pull request in', ReleaseEvent: 'Published a release in', PublicEvent: 'Made public' };
     try {
       const publicEvents = (await sharedCache)?.events;
@@ -510,14 +551,24 @@
       const events = publicEvents.filter(event => labels[event.type] && event.repo?.name && Date.parse(event.created_at) >= cutoff).sort((a,b) => Date.parse(b.created_at) - Date.parse(a.created_at));
       container.replaceChildren();
       if (!events.length) { container.append(element('p', 'list-message', 'No public activity in the last 7 days.')); return; }
-      events.forEach(event => {
-        const row = element('a', 'activity-row', '');
-        row.href = `https://github.com/${event.repo.name}`;
-        row.target = '_blank'; row.rel = 'noopener noreferrer';
-        const date = new Date(event.created_at);
-        row.append(element('span', 'activity-date', date.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})), element('span', 'activity-action', labels[event.type]), element('span', 'activity-repo', event.repo.name));
-        container.append(row);
-      });
+      let expanded = false;
+      function renderActivity() {
+        container.replaceChildren();
+        (expanded ? events : events.slice(0, 3)).forEach(event => {
+          const row = element('a', 'activity-row', '');
+          row.href = `https://github.com/${event.repo.name}`;
+          row.target = '_blank'; row.rel = 'noopener noreferrer';
+          const date = new Date(event.created_at);
+          row.append(element('span', 'activity-date', date.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric'})), element('span', 'activity-action', labels[event.type]), element('span', 'activity-repo', event.repo.name));
+          container.append(row);
+        });
+        more.hidden = events.length <= 3;
+        more.textContent = expanded ? 'Show less' : 'Show all';
+        more.setAttribute('aria-expanded', String(expanded));
+        more.setAttribute('aria-controls', container.id);
+      }
+      more.addEventListener('click', () => { expanded = !expanded; renderActivity(); });
+      renderActivity();
     } catch (_) {
       container.replaceChildren(element('p', 'list-message', 'Recent activity could not be loaded. Visit GitHub to see more.'));
     }
