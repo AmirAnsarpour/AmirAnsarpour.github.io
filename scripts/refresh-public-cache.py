@@ -41,8 +41,43 @@ def previous_snapshot():
         return {}
 
 
+def optional_json(path, fallback, *, empty_statuses=()):
+    """Keep older optional data when an endpoint is temporarily unavailable."""
+    try:
+        response = github(path)
+        if not response and 204 in empty_statuses:
+            return []
+        return json.loads(response)
+    except urllib.error.HTTPError as exc:
+        if exc.code in empty_statuses:
+            return None if 404 in empty_statuses else []
+        print(f'Optional GitHub data unavailable: {path} ({exc.code})', file=sys.stderr)
+    except (OSError, ValueError) as exc:
+        print(f'Optional GitHub data unavailable: {path} ({type(exc).__name__})', file=sys.stderr)
+    return fallback
+
+
+def repository_contributors(path, fallback):
+    contributors = []
+    try:
+        page = 1
+        while True:
+            response = github(f'{path}/contributors?per_page=100&page={page}')
+            batch = json.loads(response) if response else []
+            if not isinstance(batch, list):
+                raise ValueError('Invalid contributors')
+            contributors.extend({key: contributor.get(key) for key in ('login', 'html_url', 'avatar_url', 'contributions')} for contributor in batch if isinstance(contributor, dict))
+            if len(batch) < 100:
+                return contributors
+            page += 1
+    except (OSError, ValueError) as exc:
+        print(f'Contributors unavailable: {path} ({type(exc).__name__})', file=sys.stderr)
+        return fallback
+
+
 def build():
     previous = previous_snapshot()
+    previous_repos = {repo.get('full_name'): repo for repo in previous.get('repos', []) if isinstance(repo, dict)}
     user = json.loads(github(f'users/{OWNER}'))
     if not all(isinstance(user.get(k), int) for k in ('followers', 'following')):
         raise ValueError('Invalid GitHub profile')
@@ -66,10 +101,38 @@ def build():
             keys = ('name','full_name','html_url','description','language','stargazers_count','forks_count','pushed_at','updated_at','default_branch','homepage')
             item = {key: repo.get(key) for key in keys}
             item.update(languages=languages, readme_html=readme)
+            old = previous_repos.get(repo.get('full_name'), {})
+            commits = optional_json(path + '/commits?per_page=5', old.get('recent_commits'), empty_statuses=(409,))
+            if isinstance(commits, list):
+                item['recent_commits'] = [{'message': (commit.get('commit', {}).get('message') or commit.get('message') or '').split('\n', 1)[0], 'date': commit.get('commit', {}).get('committer', {}).get('date') or commit.get('date'), 'html_url': commit.get('html_url')} for commit in commits if isinstance(commit, dict)]
+            release = optional_json(path + '/releases/latest', old.get('latest_release', False), empty_statuses=(404,))
+            if release is None or isinstance(release, dict):
+                item['latest_release'] = None if release is None else {key: release.get(key) for key in ('name', 'tag_name', 'published_at', 'html_url')}
+                if release is not None:
+                    item['latest_release']['assets'] = [{key: asset.get(key) for key in ('name', 'browser_download_url')} for asset in (release.get('assets') or []) if isinstance(asset, dict)][:12]
+            contributors = repository_contributors(path, old.get('contributors'))
+            if isinstance(contributors, list):
+                item['contributors'] = [{key: contributor.get(key) for key in ('login', 'html_url', 'avatar_url', 'contributions')} for contributor in contributors if isinstance(contributor, dict)]
             repos.append(item)
         if len(batch) < 100:
             break
         page += 1
+    starred = []
+    try:
+        starred_page = 1
+        while True:
+            batch = json.loads(github(f'users/{OWNER}/starred?per_page=100&page={starred_page}'))
+            if not isinstance(batch, list):
+                raise ValueError('Invalid starred repositories')
+            for repo in batch:
+                if isinstance(repo, dict) and not repo.get('private'):
+                    starred.append({key: repo.get(key) for key in ('full_name', 'html_url', 'description', 'language', 'stargazers_count')})
+            if len(batch) < 100:
+                break
+            starred_page += 1
+    except (OSError, ValueError):
+        starred = previous.get('starred')
+        print('Starred repositories unavailable; preserving previous public data.', file=sys.stderr)
     events = []
     cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
     # The Events API exposes a bounded recent history; page through up to 300 events.
@@ -95,7 +158,7 @@ def build():
         if not contributions:
             raise RuntimeError('Contribution calendar unavailable and no prior calendar exists')
         print('Calendar unavailable; preserving previous public data.', file=sys.stderr)
-    return {'version':1, 'updated_at':datetime.datetime.now(datetime.timezone.utc).isoformat(), 'profile':{'followers':user['followers'], 'following':user['following']}, 'repos':repos, 'events':events, 'contributions':contributions}
+    return {'version':1, 'updated_at':datetime.datetime.now(datetime.timezone.utc).isoformat(), 'profile':{'followers':user['followers'], 'following':user['following']}, 'repos':repos, 'starred':starred, 'events':events, 'contributions':contributions}
 
 
 def main():

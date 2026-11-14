@@ -160,6 +160,7 @@
   const detailDescription = document.querySelector('#detail-description');
   const detailLanguages = document.querySelector('#detail-languages');
   const detailLinks = document.querySelector('#detail-links');
+  const detailExtras = document.querySelector('#detail-extras');
   const readme = document.querySelector('#detail-readme');
   let detailRequest = 0;
 
@@ -179,6 +180,88 @@
     link.rel = 'noopener noreferrer';
     parent.append(link);
   }
+  function displayDate(value) {
+    const date = new Date(value);
+    return value && !Number.isNaN(date.getTime()) ? date.toLocaleDateString('en-US', {month:'short', day:'numeric', year:'numeric', timeZone:'UTC'}) : '';
+  }
+  function projectDetails(repo) {
+    detailExtras.replaceChildren();
+    function group(title, content) {
+      const panel = element('details', 'detail-extra', '');
+      const summary = element('summary', '', title);
+      panel.append(summary, content);
+      detailExtras.append(panel);
+    }
+    const release = element('div', 'extra-content', '');
+    if (!Object.prototype.hasOwnProperty.call(repo, 'latest_release')) release.append(element('p', 'extra-muted', 'Release information is unavailable right now.'));
+    else if (!repo.latest_release) release.append(element('p', 'extra-muted', 'No published release yet.'));
+    else {
+      const item = repo.latest_release;
+      addExternalLink(release, item.name || item.tag_name || 'View release', item.html_url);
+      if (item.name && item.tag_name && item.name !== item.tag_name) release.append(element('span', 'extra-muted', item.tag_name));
+      if (displayDate(item.published_at)) release.append(element('span', 'extra-muted', displayDate(item.published_at)));
+      if (Array.isArray(item.assets) && item.assets.length) {
+        const downloads = element('div', 'release-downloads', '');
+        item.assets.forEach(asset => addExternalLink(downloads, asset.name || 'Download', asset.browser_download_url));
+        if (downloads.childNodes.length) release.append(downloads);
+      }
+    }
+    group('Latest release', release);
+    const commits = element('div', 'extra-content extra-commits', '');
+    if (!Array.isArray(repo.recent_commits)) commits.append(element('p', 'extra-muted', 'Recent changes are unavailable right now.'));
+    else if (!repo.recent_commits.length) commits.append(element('p', 'extra-muted', 'No commits to show.'));
+    else repo.recent_commits.forEach(commit => {
+      const row = element('div', 'extra-commit', '');
+      const url = safeUrl(commit.html_url);
+      if (url) addExternalLink(row, commit.message || 'View commit', url);
+      else row.append(element('span', '', commit.message || 'Commit'));
+      if (displayDate(commit.date)) row.append(element('time', 'extra-muted', displayDate(commit.date)));
+      commits.append(row);
+    });
+    group('Recent changes', commits);
+    const contributors = element('div', 'extra-content contributor-list', '');
+    if (!Array.isArray(repo.contributors)) contributors.append(element('p', 'extra-muted', 'Contributors are unavailable right now.'));
+    else if (!repo.contributors.length) contributors.append(element('p', 'extra-muted', 'No contributors to show.'));
+    else repo.contributors.forEach(person => {
+      const url = safeUrl(person.html_url);
+      if (!url || !person.login) return;
+      const link = element('a', 'contributor', '');
+      link.href = url; link.target = '_blank'; link.rel = 'noopener noreferrer';
+      const avatarUrl = safeUrl(person.avatar_url);
+      if (avatarUrl) { const avatar = document.createElement('img'); avatar.src = avatarUrl; avatar.alt = ''; avatar.width = 32; avatar.height = 32; avatar.loading = 'lazy'; link.append(avatar); }
+      link.append(element('span', '', person.login));
+      contributors.append(link);
+    });
+    group('Contributors', contributors);
+  }
+  async function loadStarred() {
+    const container = document.querySelector('#starred-list');
+    const more = document.querySelector('#starred-more');
+    const starred = (await sharedCache)?.starred;
+    if (!Array.isArray(starred)) { container.replaceChildren(element('p', 'list-message', 'Starred projects are temporarily unavailable.')); return; }
+    if (!starred.length) { container.replaceChildren(element('p', 'list-message', 'No starred projects to show yet.')); return; }
+    let shown = 0;
+    function showMore() {
+      const end = Math.min(shown + 6, starred.length);
+      for (; shown < end; shown++) {
+        const repo = starred[shown];
+        const url = safeUrl(repo.html_url);
+        if (!url || !repo.full_name) continue;
+        const row = element('a', 'starred-row', '');
+        row.href = url; row.target = '_blank'; row.rel = 'noopener noreferrer';
+        const info = element('span', 'starred-info', '');
+        info.append(element('span', 'starred-name', repo.full_name));
+        if (repo.description) info.append(element('span', 'starred-description', repo.description));
+        row.append(info, element('span', 'starred-meta', [repo.language, Number.isFinite(repo.stargazers_count) ? `${repo.stargazers_count.toLocaleString()} stars` : ''].filter(Boolean).join(' / ')));
+        container.append(row);
+      }
+      more.hidden = shown >= starred.length;
+    }
+    container.replaceChildren();
+    more.addEventListener('click', showMore);
+    showMore();
+  }
+  loadStarred();
   function renderReadme(html, repo) {
     const source = new DOMParser().parseFromString(html, 'text/html');
     const allowed = new Set(['ARTICLE','DIV','SECTION','P','H1','H2','H3','H4','H5','H6','UL','OL','LI','A','IMG','STRONG','EM','B','I','DEL','S','CODE','PRE','BLOCKQUOTE','HR','BR','TABLE','THEAD','TBODY','TR','TH','TD','DETAILS','SUMMARY','SUP','SUB']);
@@ -251,6 +334,7 @@
     detailLinks.replaceChildren();
     addExternalLink(detailLinks, 'View on GitHub', repo.html_url);
     if (repo.homepage && repo.homepage.trim()) addExternalLink(detailLinks, 'Visit project website', repo.homepage.trim());
+    projectDetails(repo);
     readme.textContent = 'Loading README…';
     dialog.showModal();
     try {
