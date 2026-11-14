@@ -213,10 +213,7 @@ html::-webkit-scrollbar-thumb:hover,.project-dialog::-webkit-scrollbar-thumb:hov
 html::-webkit-scrollbar-button,.project-dialog::-webkit-scrollbar-button,.readme pre::-webkit-scrollbar-button,.readme table::-webkit-scrollbar-button{display:none;width:0;height:0}
 @supports (-moz-appearance:none){html,.project-dialog,.readme pre,.readme table{scrollbar-width:thin;scrollbar-color:#aaa transparent}}
 
-.mode-toggle{border:0;background:none;color:inherit;font:inherit;padding:0;cursor:pointer}
-.mode-toggle:focus-visible{outline:2px solid currentColor;outline-offset:4px}
 .error-actions{display:flex;align-items:center;gap:24px;font-size:13px}
-@media(max-width:700px){.topbar nav .mode-toggle{min-height:44px}}
 
 /* A softer, purpose-built dark palette. Images keep their original colors. */
 html[data-theme="dark"]{color-scheme:dark;background:#151515;color:#ededeb}
@@ -302,14 +299,14 @@ html[data-theme="dark"] .detail-header button{border-color:#999}
 
 html[data-theme="dark"] .contact :is(a,button):focus-visible{outline-color:#171717}
 
-/* Compact theme control with a clear, consistent touch target. */
-.mode-toggle{display:inline-flex;align-items:center;justify-content:center;flex:none;width:44px;height:44px;min-height:44px}
-.mode-toggle-frame{display:flex;align-items:center;justify-content:center;width:32px;height:32px;border:1px solid #c8c8c8;transition:border-color .15s ease,background-color .15s ease}
-.mode-toggle:hover .mode-toggle-frame{border-color:#111;background:#f3f3f3}
-.mode-icon{display:block;width:17px;height:17px}
-.mode-sun,html[data-theme="dark"] .mode-moon{display:none}
-html[data-theme="dark"] .mode-sun{display:block}
-html[data-theme="dark"] .mode-toggle-frame{border-color:#646464}
-html[data-theme="dark"] .mode-toggle:hover .mode-toggle-frame{border-color:#eee;background:#303030}
-@media(prefers-reduced-motion:reduce){.mode-toggle-frame{transition:none}}
 .topbar nav{align-items:center}
+
+/* Text-only color mode selector. */
+.mode-switch{display:inline-flex;align-items:center;flex:none;border:1px solid #c8c8c8}
+.mode-choice{display:inline-flex;align-items:center;justify-content:center;min-width:43px;min-height:42px;border:0;background:transparent;color:#777;font:inherit;font-size:11px;cursor:pointer}
+.mode-choice[aria-pressed="true"]{background:#151515;color:#fff}
+.mode-choice:focus-visible{position:relative;outline:2px solid currentColor;outline-offset:-3px}
+html[data-theme="dark"] .mode-switch{border-color:#646464}
+html[data-theme="dark"] .mode-choice{color:#aaa}
+html[data-theme="dark"] .mode-choice[aria-pressed="true"]{background:#ededeb;color:#151515}
+@media(max-width:400px){.topbar:not(.error-topbar) nav{gap:6px}.mode-choice{min-width:40px}}
