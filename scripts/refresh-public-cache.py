@@ -70,10 +70,22 @@ def build():
         if len(batch) < 100:
             break
         page += 1
-    events = json.loads(github(f'users/{OWNER}/events/public?per_page=30'))
-    if not isinstance(events, list):
-        raise ValueError('Invalid events data')
-    events = [{'type': x.get('type'), 'created_at': x.get('created_at'), 'repo': {'name': x.get('repo', {}).get('name')}} for x in events]
+    events = []
+    cutoff = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
+    # The Events API exposes a bounded recent history; page through up to 300 events.
+    for event_page in range(1, 4):
+        batch = json.loads(github(f'users/{OWNER}/events/public?per_page=100&page={event_page}'))
+        if not isinstance(batch, list):
+            raise ValueError('Invalid events data')
+        for event in batch:
+            try:
+                when = datetime.datetime.fromisoformat(event.get('created_at', '').replace('Z', '+00:00'))
+            except ValueError:
+                continue
+            if when >= cutoff:
+                events.append({'type': event.get('type'), 'created_at': event.get('created_at'), 'repo': {'name': event.get('repo', {}).get('name')}})
+        if len(batch) < 100:
+            break
     try:
         contributions = json.loads(get(f'https://github-contributions-api.jogruber.de/v4/{OWNER}?y=last'))
         if not contributions.get('contributions'):

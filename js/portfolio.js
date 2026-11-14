@@ -202,7 +202,23 @@
           imageUrl.pathname = imageUrl.pathname.replace('/blob/', '/');
           src = imageUrl.href;
         }
-        target.src = src; target.alt = node.getAttribute('alt') || ''; target.loading = 'lazy';
+        target.src = src;
+        target.alt = node.getAttribute('alt') || '';
+        target.loading = 'lazy';
+        target.decoding = 'async';
+        const width = Number(node.getAttribute('width'));
+        const height = Number(node.getAttribute('height'));
+        if (Number.isInteger(width) && width > 0 && width <= 10000 && Number.isInteger(height) && height > 0 && height <= 10000) {
+          target.width = width;
+          target.height = height;
+          target.className = 'readme-image-sized';
+        } else if (imageUrl.hostname === 'img.shields.io' || (node.getAttribute('data-canonical-src') || '').startsWith('https://img.shields.io/')) {
+          target.width = 120;
+          target.height = 20;
+          target.className = 'readme-badge';
+        } else {
+          target.className = 'readme-image-unsized';
+        }
       }
       node.childNodes.forEach(child => copy(child, target));
       parent.append(target);
@@ -215,7 +231,23 @@
     const request = ++detailRequest;
     detailTitle.textContent = repo.name;
     detailDescription.textContent = repo.description || 'No description provided.';
-    detailLanguages.textContent = `Languages: ${languages(repo).join(', ') || 'Not available'}`;
+    detailLanguages.replaceChildren();
+    const languageHeading = element('span', 'detail-languages-label', 'Languages / By code size');
+    detailLanguages.append(languageHeading);
+    const breakdown = Object.entries(repo.languages || {}).filter(([,bytes]) => Number.isFinite(bytes) && bytes > 0).sort((a,b) => b[1] - a[1]);
+    const totalBytes = breakdown.reduce((sum, [,bytes]) => sum + bytes, 0);
+    if (totalBytes) {
+      const list = element('div', 'detail-language-list', '');
+      breakdown.forEach(([language, bytes]) => {
+        const row = element('div', 'detail-language', '');
+        const percentage = bytes / totalBytes * 100;
+        row.append(element('span', '', language), element('span', '', `${percentage < 0.1 ? '<0.1' : percentage.toFixed(1)}%`));
+        list.append(row);
+      });
+      detailLanguages.append(list);
+    } else {
+      detailLanguages.append(element('p', 'detail-language-empty', repo.language ? `${repo.language} / Percentage unavailable` : 'Language data unavailable'));
+    }
     detailLinks.replaceChildren();
     addExternalLink(detailLinks, 'View on GitHub', repo.html_url);
     if (repo.homepage && repo.homepage.trim()) addExternalLink(detailLinks, 'Visit project website', repo.homepage.trim());
@@ -230,6 +262,16 @@
     }
   }
   document.querySelector('#detail-close').addEventListener('click', () => dialog.close());
+  function outsideDialog(event) {
+    const bounds = dialog.getBoundingClientRect();
+    return event.clientX < bounds.left || event.clientX > bounds.right || event.clientY < bounds.top || event.clientY > bounds.bottom;
+  }
+  let pointerStartedOutside = false;
+  dialog.addEventListener('pointerdown', event => { pointerStartedOutside = event.target === dialog && outsideDialog(event); });
+  dialog.addEventListener('click', event => {
+    if (pointerStartedOutside && event.target === dialog && outsideDialog(event)) dialog.close();
+    pointerStartedOutside = false;
+  });
   dialog.addEventListener('close', () => { detailRequest++; });
 
   async function loadProfile() {
@@ -348,9 +390,10 @@
     try {
       const publicEvents = (await sharedCache)?.events;
       if (!publicEvents) throw new Error('Activity unavailable');
-      const events = publicEvents.filter(event => labels[event.type] && event.repo?.name).slice(0, 6);
+      const cutoff = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      const events = publicEvents.filter(event => labels[event.type] && event.repo?.name && Date.parse(event.created_at) >= cutoff).sort((a,b) => Date.parse(b.created_at) - Date.parse(a.created_at));
       container.replaceChildren();
-      if (!events.length) { container.append(element('p', 'list-message', 'No recent public activity to show.')); return; }
+      if (!events.length) { container.append(element('p', 'list-message', 'No public activity in the last 7 days.')); return; }
       events.forEach(event => {
         const row = element('a', 'activity-row', '');
         row.href = `https://github.com/${event.repo.name}`;
